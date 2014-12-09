@@ -8,7 +8,6 @@ from django.db import transaction
 from django.conf import settings
 from django.contrib.auth.models import User
 from core.models import *
-
 import os
 
 # Create your views here.
