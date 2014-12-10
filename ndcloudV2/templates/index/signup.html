@@ -3,7 +3,7 @@
 {% include "common/error_messages.html" %}
 <form class="form-signin" role="form" name='signupForm' action="{% url 'signup' %}" method="post">
 {% csrf_token %}
-        <h2 class="form-signin-heading">Please register</h2>
+        <h2 class="form-signin-heading">Please signup</h2>
         <div class="form-group">       	
         	<label for="inputEmail" class="sr-only">Email address</label>
         	<input type="email" name="email" value="" id="inputEmail" class="form-control" placeholder="Email address" 

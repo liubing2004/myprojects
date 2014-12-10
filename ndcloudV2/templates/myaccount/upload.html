@@ -1,7 +1,62 @@
-<form action="{% url 'upload_project' %}" method="post"  enctype="multipart/form-data">
+{% include "common/header.html" %}
+
+
+<!-- <form action="{% url 'upload_project' %}" method="post"  enctype="multipart/form-data">
 {% csrf_token %}
+<span class="btn btn-default btn-file">
+    Browse <input type="file" name="myfile">
+</span>
 File: <input type="file" name="myfile" /></br>
 Name: <input type="text" name="name" value=""/></br>
 
 <input type="submit" value="Upload" />
+</form> -->
+
+<form class="form-submit" role="form" action="{% url 'upload_project' %}" method="post"  enctype="multipart/form-data">
+<div class="container-fluid">
+    <section class="container">
+		<div class="container-page">				
+			<div class="col-md-6">
+				<h2 class="dark-grey">Upload 3D Project</h2>
+				
+				<div class="form-group col-lg-6">
+						<label for="projectname" >Project Name</label>
+						<input type="text" name="projectname" class="form-control" id="projectname" value="" required>
+				</div>
+				
+				<div class="form-group col-lg-6">
+					<label for="filename" >File</label>
+					<input type="file" class="filestyle" name="myfile" data-buttonName="btn-primary" >
+				</div>
+				
+				<div class="col-lg-6">
+					<button class="btn btn-lg btn-primary" type="submit">Submit</button>
+				</div>
+				
+							
+			
+			</div>
+		
+			<div class="col-md-6">
+				<h3 class="dark-grey">Instruction</h3>
+				<p>
+					For best results, we suggest uploading in .STL or .OBJ format. But don't forget, we accept over 20 different file types.
+				</p>
+				<p>
+					Need multicolor?
+				</p>
+				<p>
+				When you upload your 3D file with some formats, for instance .obj, you have to put colours, textures and the 3D model in a .zip format.
+When you upload the 3D model to the site, you need to select the .zip file on your computer.
+				</p>
+				
+				
+			</div>
+		</div>
+	</section>
+</div>
 </form>
+
+	
+
+{% include "common/footer.html" %}
