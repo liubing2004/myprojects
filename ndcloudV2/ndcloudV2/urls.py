@@ -15,8 +15,10 @@ urlpatterns = patterns('',
     url(r'^signup$', core_views.register, name='signup'),
     url(r'^myprofile$', core_views.myprofile, name='myprofile'),
     url(r'^uploadproject$', core_views.upload_project, name='upload_project'),
+    #url(r'^uploadconfirm$', core_views.upload_confirm, name='upload_confirm'),
     url(r'^(?P<project_id>\d+)/projectdetail/$',core_views.project_detail, name='project_detail' ),
     url(r'^projectlist/$',core_views.project_list, name='project_list' ),
+    url(r'^aboutus/$',core_views.aboutus, name='aboutus' ),
 
     url(r'^admin/', include(admin.site.urls)),
 )

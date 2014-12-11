@@ -13,28 +13,26 @@ Name: <input type="text" name="name" value=""/></br>
 </form> -->
 
 <form class="form-submit" role="form" action="{% url 'upload_project' %}" method="post"  enctype="multipart/form-data">
+{% csrf_token %}
 <div class="container-fluid">
     <section class="container">
 		<div class="container-page">				
 			<div class="col-md-6">
 				<h2 class="dark-grey">Upload 3D Project</h2>
 				
-				<div class="form-group col-lg-6">
+				<div class="form-group col-lg-8">
 						<label for="projectname" >Project Name</label>
 						<input type="text" name="projectname" class="form-control" id="projectname" value="" required>
 				</div>
 				
-				<div class="form-group col-lg-6">
+				<div class="form-group col-lg-8">
 					<label for="filename" >File</label>
 					<input type="file" class="filestyle" name="myfile" data-buttonName="btn-primary" >
 				</div>
 				
-				<div class="col-lg-6">
+				<div class="form-group col-lg-8">
 					<button class="btn btn-lg btn-primary" type="submit">Submit</button>
-				</div>
-				
-							
-			
+				</div>		
 			</div>
 		
 			<div class="col-md-6">

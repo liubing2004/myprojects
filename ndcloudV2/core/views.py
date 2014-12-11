@@ -112,7 +112,9 @@ def upload_project(request):
         else:
             dest.write(file.read())
         dest.close()
-    return redirect('/myprofile')
+    return render(request, 'myaccount/upload_confirm.html', {})
+
+   
 
 def project_detail(request, project_id):
     project = get_object_or_404(ProjectProfile, pk=project_id)
@@ -121,5 +123,8 @@ def project_detail(request, project_id):
 def project_list(request):
     projects = list()
     return render(request, 'ndmodel/project_list.html', {'projects':projects})
+    
+def aboutus(request):
+	return render(request, 'index/aboutus.html', {})
     
     
