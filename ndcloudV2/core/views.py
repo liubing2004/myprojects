@@ -12,8 +12,7 @@ import os
 
 # Create your views here.
 def index(request):
-    #response = render(request,'index/index.html',{})
-    return render(request, 'ndmodel/project_list.html', {})
+    return render_internal(request, 'ndmodel/project_list.html', {})
 
 def login_view(request):    
     error_messages = list()
@@ -21,7 +20,7 @@ def login_view(request):
     print request
     if request.method == 'GET':
         next = request.REQUEST.get('next', "/")
-        return render(request,'index/login.html',
+        return render_internal(request,'index/login.html',
                       {"next":next, "error_messages":error_messages})
     elif request.method == 'POST':
         email = request.POST.get("email","").strip()
@@ -34,7 +33,7 @@ def login_view(request):
         
         #redirect to login page
         error_messages.append("Email or password is wrong.")
-        return render(request,'index/login.html',
+        return render_internal(request,'index/login.html',
                       {"next":next,"error_messages":error_messages})
     
 def logout_view(request):
@@ -45,7 +44,7 @@ def logout_view(request):
 def register(request):
     error_messages = list();
     if request.method == 'GET':
-        return render(request,'index/signup.html',{'error_messages':error_messages})
+        return render_internal(request,'index/signup.html',{'error_messages':error_messages})
     
     #email format verfication should be done in FE
     email = request.POST.get("email","").strip()
@@ -55,18 +54,18 @@ def register(request):
     
     if len(email)==0 or len(passwd)==0 or passwd != passwd_confirm:
         error_messages.append("Invalid email or password.")
-        return render(request,'index/signup.html',{'error_messages':error_messages})
+        return render_internal(request,'index/signup.html',{'error_messages':error_messages})
 
     try:
         validate_email(email)
     except ValidationError as e:
         error_messages.append("Invalid email.")
-        return render(request,'index/signup.html',{'error_messages':error_messages})
+        return render_internal(request,'index/signup.html',{'error_messages':error_messages})
 
     #first need to check whether email had been registered already or not
     if User.objects.filter(email=email).count() > 0:
         error_messages.append("User already exists.")
-        return render(request,'index/signup.html',{'error_messages':error_messages})
+        return render_internal(request,'index/signup.html',{'error_messages':error_messages})
     
     try: 
         user = User.objects.create_user(username=email, email=email, password=passwd)
@@ -79,21 +78,20 @@ def register(request):
     except Exception,e:
         raise e
         error_messages.append("Cannot create user.");
-        return render(request,'index/signup.html',{'error_messages':error_messages})
+        return render_internal(request,'index/signup.html',{'error_messages':error_messages})
     
 
 @login_required(login_url='/login')
 def myprofile(request):
     profile = UserProfile.objects.get(user=request.user)
-    print profile
-    return render(request,'myaccount/myprofile.html',{"userprofile":profile})
+    return render_internal(request,'myaccount/myprofile.html',{"userprofile":profile})
 
 
 @login_required(login_url='/login')
 @transaction.atomic
 def upload_project(request):
     if request.method == 'GET':
-        return render(request,'myaccount/upload.html',{})
+        return render_internal(request,'myaccount/upload.html',{})
     project_name = request.POST.get("name", "").strip()
     user = request.user
     project_profile = ProjectProfile(user=user, name=project_name)
@@ -112,19 +110,33 @@ def upload_project(request):
         else:
             dest.write(file.read())
         dest.close()
-    return render(request, 'myaccount/upload_confirm.html', {})
+    return render_internal(request, 'myaccount/upload_confirm.html', {})
 
    
 
+def project_3dview(request, project_id):
+    project = get_object_or_404(ProjectProfile, pk=project_id)
+    return render_internal(request, 'ndmodel/project_3dview.html', {'project':project})
+
 def project_detail(request, project_id):
     project = get_object_or_404(ProjectProfile, pk=project_id)
-    return render(request, 'ndmodel/project_detail.html', {'project':project})
+    return render_internal(request, 'ndmodel/project_detail.html', {'project':project})    
 
 def project_list(request):
     projects = list()
-    return render(request, 'ndmodel/project_list.html', {'projects':projects})
+    return render_internal(request, 'ndmodel/project_list.html', {'projects':projects})
     
 def aboutus(request):
-	return render(request, 'index/aboutus.html', {})
+	return render_internal(request, 'index/aboutus.html', {})
+    
+
+"""
+internal render function
+"""    
+def render_internal(request, url, dirs):
+    new_dirs = dirs
+    uf = UserProfile.objects.get(user=request.user)
+    new_dirs["uf"] = uf
+    return render(request, url, new_dirs)
     
     

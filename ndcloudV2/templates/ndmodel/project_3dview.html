@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+{% load jsonify %}
+<head>
+		<title>three.js webgl - loaders - vtk loader</title>
+		<meta charset="utf-8">
+<!-- 		<style type="text/css">
+            .container
+            {
+                width: 20px;
+                height:20px;
+            }
+
+        </style> -->
+		<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+		<script src="/medias/dist/js/three.min.js"></script>
+		<script src="/medias/dist/js/TrackballControls.js"></script>
+		<script src="/medias/dist/js/OBJMTLLoader.js"></script>
+		<script src="/medias/dist/js/MTLLoader.js"></script>
+		<script src="/medias/dist/js/Detector.js"></script>
+		<script src="/medias/dist/js/stats.min.js"></script>
+		
+	</head>
+
+	<body>		
+	<div id="container"></div>
+	<script>
+
+			if ( ! Detector.webgl ) Detector.addGetWebGLMessage();
+
+			var container, stats;
+
+			var camera, controls, scene, renderer;
+
+			var cross;
+			var render_width = 600;
+			var render_height = 400;
+
+			init();
+			animate();
+
+			function init() {
+				camera = new THREE.PerspectiveCamera( 60, window.innerWidth / window.innerHeight, 0.01, 1e10 );
+				camera.position.x = 100;
+				camera.position.y = 100;
+				camera.position.z = 100;
+				camera.lookAt(new THREE.Vector3(0, 0, 0));	
+
+				controls = new THREE.TrackballControls( camera );
+				controls.rotateSpeed = 5.0;
+				controls.zoomSpeed = 5;
+				controls.panSpeed = 2;
+				controls.noZoom = false;
+				controls.noPan = false;
+				controls.staticMoving = true;
+				controls.dynamicDampingFactor = 0.3;
+				scene = new THREE.Scene();
+				scene.add( camera );			
+				var light = new THREE.PointLight(0xffffff, 1);
+    			light.position = camera.position;
+				camera.add( light );
+
+				// texture
+				var manager = new THREE.LoadingManager();
+				manager.onProgress = function ( item, loaded, total ) {
+					console.log( item, loaded, total );
+
+				};
+
+				var onProgress = function ( xhr ) {
+					if ( xhr.lengthComputable ) {
+						var percentComplete = xhr.loaded / xhr.total * 100;
+						console.log( Math.round(percentComplete, 2) + '% downloaded' );
+					}
+				};
+
+				var onError = function ( xhr ) {
+				};
+				
+				var texture = new THREE.Texture();
+			    var loader = new THREE.ImageLoader( manager );
+			    loader.load( '/medias/upload/{{project.id}}/original_models/normal.png', function ( image ) {
+			        console.log('load image');
+			        texture.image = image;
+			        texture.needsUpdate = true;
+			    } );
+
+
+				// model
+				// prepare loader and load the model
+				var loader = new THREE.OBJMTLLoader();
+				loader.load('/medias/upload/{{project.id}}/original_models/normal.obj', 
+						'/medias/upload/{{project.id}}/original_models/normal.obj.mtl', 
+						function(object) {  
+					var scale = 1;
+					object.traverse( function ( child ) {
+
+						if ( child instanceof THREE.Mesh ) {							
+			                console.log('child', child);							
+ 							child.geometry.computeBoundingBox ();
+ 				            var bBox = child.geometry.boundingBox;
+
+ 				            // compute overall bbox
+/*  				            console.log( bBox.min.x+"<x<"+ bBox.max.x);
+ 				            console.log( bBox.min.y+"<y<"+ bBox.max.y);
+ 				            console.log( bBox.min.z+"<z<"+ bBox.max.z); */
+ 				            var disx = -(bBox.min.x + bBox.max.x)/2;
+ 				            var disy = -(bBox.min.y + bBox.max.y)/2;
+ 				            var disz = -(bBox.min.z + bBox.max.z)/2;
+ 				            console.log(disx+","+disy+","+disz);
+ 				            child.geometry.applyMatrix( new THREE.Matrix4().makeTranslation( disx, disy, disz) )
+ 							child.geometry.verticesNeedUpdate = true;
+							scale = Math.max (100/(bBox.max.x-bBox.min.x), 100/(bBox.max.y-bBox.min.y));
+							scale = Math.max (100/(bBox.max.z-bBox.min.z), scale);
+				            
+						}
+
+					} );
+
+				  object.scale.set(scale, scale, scale);
+				  scene.add(object);
+				}, onProgress, onError);
+				
+
+				// renderer
+				renderer = new THREE.WebGLRenderer( { antialias: true } );
+				renderer.setSize( render_width, render_height);
+				container = document.getElementById("container");
+				document.body.appendChild( container );
+				container.appendChild( renderer.domElement );
+				window.addEventListener( 'resize', onWindowResize, false );
+
+			}
+
+			function onWindowResize() {
+				camera.aspect = window.innerWidth / window.innerHeight;
+				camera.updateProjectionMatrix();
+				renderer.setSize( render_width, render_height);
+				controls.handleResize();
+
+			}
+
+			function animate() {
+				requestAnimationFrame( animate );
+				controls.update();
+				camera.lookAt( scene.position );
+				renderer.render( scene, camera );
+			}
+
+		</script>
+	</body>
+</html>
+
