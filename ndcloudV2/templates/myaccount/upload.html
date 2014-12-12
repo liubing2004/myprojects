@@ -1,17 +1,5 @@
 {% include "common/header.html" %}
 
-
-<!-- <form action="{% url 'upload_project' %}" method="post"  enctype="multipart/form-data">
-{% csrf_token %}
-<span class="btn btn-default btn-file">
-    Browse <input type="file" name="myfile">
-</span>
-File: <input type="file" name="myfile" /></br>
-Name: <input type="text" name="name" value=""/></br>
-
-<input type="submit" value="Upload" />
-</form> -->
-
 <form class="form-submit" role="form" action="{% url 'upload_project' %}" method="post"  enctype="multipart/form-data">
 {% csrf_token %}
 <div class="container-fluid">
@@ -22,7 +10,8 @@ Name: <input type="text" name="name" value=""/></br>
 				
 				<div class="form-group col-lg-8">
 						<label for="projectname" >Project Name</label>
-						<input type="text" name="projectname" class="form-control" id="projectname" value="" required>
+						<input type="text" name="projectname" class="form-control" id="projectname" value="" data-validation="length" 
+        					data-validation-length="min4" data-validation-error-msg="You did not enter a valid project name" required>
 				</div>
 				
 				<div class="form-group col-lg-8">

@@ -8,11 +8,13 @@ from django.db import transaction
 from django.conf import settings
 from django.contrib.auth.models import User
 from core.models import *
-import os
+import os, zipfile
+
+import utils
 
 # Create your views here.
 def index(request):
-    return render_internal(request, 'ndmodel/project_list.html', {})
+    return project_list(request)
 
 def login_view(request):    
     error_messages = list()
@@ -92,15 +94,26 @@ def myprofile(request):
 def upload_project(request):
     if request.method == 'GET':
         return render_internal(request,'myaccount/upload.html',{})
+    if request.FILES == None or len(request.FILES.items())==0:
+        return render_internal(request,'myaccount/upload.html',{})
+    
+    for key, file in request.FILES.items():
+        unzipped = zipfile.ZipFile(file)
+        for img_name in unzipped.namelist():
+            if not utils.isValidImageName(img_name):
+                return render_internal(request,'myaccount/upload.html',{})
+    
+    
     project_name = request.POST.get("name", "").strip()
     user = request.user
     project_profile = ProjectProfile(user=user, name=project_name)
     project_profile.save()
     
+    directory = settings.BASE_DIR+"/medias/upload/%d/original/" %(project_profile.id)
+    if not os.path.exists(directory):
+        os.makedirs(directory)
+    
     for key, file in request.FILES.items():
-        directory = settings.BASE_DIR+"/medias/upload/%d/original/" %(project_profile.id)
-        if not os.path.exists(directory):
-            os.makedirs(directory)
         path = directory + file.name
         print path
         dest = open(path, 'w')
@@ -110,6 +123,7 @@ def upload_project(request):
         else:
             dest.write(file.read())
         dest.close()
+    
     return render_internal(request, 'myaccount/upload_confirm.html', {})
 
    
@@ -120,11 +134,18 @@ def project_3dview(request, project_id):
 
 def project_detail(request, project_id):
     project = get_object_or_404(ProjectProfile, pk=project_id)
-    return render_internal(request, 'ndmodel/project_detail.html', {'project':project})    
+    owner_uf = UserProfile.objects.get(user=project.user)
+    owner_other_projects = list((ProjectProfile.objects.filter(user = project.user.id, status = utils.ProjectStatus.success).exclude(id=project_id))[:4])   
+    print "owner other projects:", owner_other_projects
+    print "project owner:", owner_uf
+    return render_internal(request, 'ndmodel/project_detail.html', 
+                           {'project':project, 'owner_uf':owner_uf,
+                            'owner_other_projects':owner_other_projects})    
 
 def project_list(request):
-    projects = list()
-    return render_internal(request, 'ndmodel/project_list.html', {'projects':projects})
+    projects = list(ProjectProfile.objects.filter(status = utils.ProjectStatus.success))
+    print "project size:", len(projects)
+    return render_internal(request, 'ndmodel/project_list.html', {'projects':projects, 'projects_size':len(projects)})
     
 def aboutus(request):
 	return render_internal(request, 'index/aboutus.html', {})
@@ -135,8 +156,11 @@ internal render function
 """    
 def render_internal(request, url, dirs):
     new_dirs = dirs
-    uf = UserProfile.objects.get(user=request.user)
-    new_dirs["uf"] = uf
+    if request.user.id != None:
+        uf = UserProfile.objects.get(user=request.user)
+        new_dirs["uf"] = uf
     return render(request, url, new_dirs)
+
+
     
     

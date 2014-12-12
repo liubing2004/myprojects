@@ -1,13 +1,5 @@
 {% include "common/header.html" %}
 
- <!-- Portfolio Item Heading -->
-       <div class="row">
-           <div class="col-lg-12">
-               <h1 class="page-header">{{project.name}}</h1>
-           </div>
-       </div>
-       <!-- /.row -->
-
        <!-- Portfolio Item Row -->
        <div class="row">
 
@@ -18,52 +10,36 @@
            </div>
 
            <div class="col-md-4">
+           	   <h3>Project Name</h3>
+           	   <p>{{project.name}}</p>
                <h3>Project Description</h3>
                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam viverra euismod odio, gravida pellentesque urna varius vitae. Sed dui lorem, adipiscing in adipiscing et, interdum nec metus. Mauris ultricies, justo eu convallis placerat, felis enim.</p>
-               <h3>Project Details</h3>
-               <ul>
-                   <li>Lorem Ipsum</li>
-                   <li>Dolor Sit Amet</li>
-                   <li>Consectetur</li>
-                   <li>Adipiscing Elit</li>
-               </ul>
+               <h3>Owner</h3>
+               <p>{{owner_uf.name}}</p>
            </div>
 
        </div>
        <!-- /.row -->
 
        <!-- Related Projects Row -->
+       {% if owner_other_projects  %}
        <div class="row">
-
            <div class="col-lg-12">
-               <h3 class="page-header">Related Projects</h3>
+               <h3 class="page-header">Projects By Same User</h3>
            </div>
-
+           
+		   {% for project in owner_other_projects %}
            <div class="col-sm-3 col-xs-6">
-               <a href="#">
-                   <img class="img-responsive portfolio-item" src="http://placehold.it/500x300" alt="">
+               <a href="/projectdetail/{{project.id}}">
+                   <img class="img-responsive portfolio-item" src="/medias/upload/{{project.id}}/profile.jpg" alt="">
                </a>
+                <h3>
+                    <a href="/projectdetail/{{project.id}}">{{project.name}}</a>
+                </h3>
            </div>
-
-           <div class="col-sm-3 col-xs-6">
-               <a href="#">
-                   <img class="img-responsive portfolio-item" src="http://placehold.it/500x300" alt="">
-               </a>
-           </div>
-
-           <div class="col-sm-3 col-xs-6">
-               <a href="#">
-                   <img class="img-responsive portfolio-item" src="http://placehold.it/500x300" alt="">
-               </a>
-           </div>
-
-           <div class="col-sm-3 col-xs-6">
-               <a href="#">
-                   <img class="img-responsive portfolio-item" src="http://placehold.it/500x300" alt="">
-               </a>
-           </div>
-
+           {% endfor %}
        </div>
+       {% endif %}
        <!-- /.row -->
 
        <hr>

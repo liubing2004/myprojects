@@ -15,6 +15,7 @@ class UserProfile(models.Model):
 class ProjectProfile(models.Model):
     user = models.ForeignKey(User)
     name = models.CharField(max_length=200, default="")
+    status = models.IntegerField(default=0)
     
     def __str__(self):
         return "id="+str(self.id)+", name="+self.name
