@@ -1,6 +1,6 @@
 {% include "common/header.html" %}
 
-<form class="form-submit" role="form" action="{% url 'upload_project' %}" method="post"  enctype="multipart/form-data">
+<form class="upload_project_form" role="form" action="{% url 'upload_project' %}" method="post"  enctype="multipart/form-data">
 {% csrf_token %}
 <div class="container-fluid">
     <section class="container">
@@ -9,14 +9,37 @@
 				<h2 class="dark-grey">Upload 3D Project</h2>
 				
 				<div class="form-group col-lg-8">
-						<label for="projectname" >Project Name</label>
-						<input type="text" name="projectname" class="form-control" id="projectname" value="" data-validation="length" 
+						<label for="project_name" >Project Name</label>
+						<input type="text" name="project_name" class="form-control" id="project_name" value="" data-validation="length" 
         					data-validation-length="min4" data-validation-error-msg="You did not enter a valid project name" required>
+        				
 				</div>
 				
 				<div class="form-group col-lg-8">
 					<label for="filename" >File</label>
-					<input type="file" class="filestyle" name="myfile" data-buttonName="btn-primary" >
+					<input type="file" class="filestyle" name="project" data-buttonName="btn-primary" data-validation="mime size required" 
+						data-validation-allowing="zip" 
+					    data-validation-max-size="25M"
+						data-validation-error-msg="You need to upload a zip file." required>
+				</div>
+				
+				
+				<div class="form-group col-lg-8">
+					<label for="filename" >Profile Picture</label>
+					<input type="file" class="filestyle" name="project_image" data-buttonName="btn-primary"
+							 data-validation="mime size required" 
+							 data-validation-allowing="jpg, jpeg, png, bmp" 
+		 					 data-validation-max-size="2M"
+							 data-validation-error-msg="You need to upload a picture." required>
+				</div>
+				
+				<div class="form-group col-lg-8">
+					<div class="checkbox">
+  						<label for="is3dmodel">
+    						<input type="checkbox" name="is3dmodel" id="is3dmodel"  required>
+   										I am uploading 3d a model.
+  						</label>
+					</div>
 				</div>
 				
 				<div class="form-group col-lg-8">

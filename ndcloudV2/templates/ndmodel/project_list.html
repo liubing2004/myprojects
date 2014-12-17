@@ -17,7 +17,7 @@
         {% endif %}
            <div class="col-md-3 portfolio-item">
                 <a href="/projectdetail/{{project.id}}">
-                    <img class="img-responsive" src="/medias/upload/{{project.id}}/profile.jpg" alt="">
+                    <img class="img-responsive" src="/medias/upload/{{project.id}}/{{project.profile_image}}" alt="">
                 </a>
                 <h3>
                     <a href="/projectdetail/{{project.id}}">{{project.name}}</a>
@@ -35,31 +35,31 @@
         <div class="row text-center">
             <div class="col-lg-12">
                 <ul class="pagination">
+                	{% if pre_page %}
                     <li>
-                        <a href="#">&laquo;</a>
+                        <a href="?page={{ pre_page }}">&laquo;</a>
                     </li>
-                    <li class="active">
-                        <a href="#">1</a>
-                    </li>
-                    <li>
-                        <a href="#">2</a>
-                    </li>
-                    <li>
-                        <a href="#">3</a>
-                    </li>
-                    <li>
-                        <a href="#">4</a>
-                    </li>
-                    <li>
-                        <a href="#">5</a>
-                    </li>
-                    <li>
-                        <a href="#">&raquo;</a>
-                    </li>
+                    {% endif %}
+                    {% for page in page_range %}
+                    	{% if page == projects.number %}
+                    		<li class="active">
+                    	{% else %}
+                    		<li>
+                    	{% endif %}
+                        	<a href="?page={{page}}">{{page}}</a>
+                    	</li>
+                    {% endfor %}
+                    {% if next_page %}
+                    	<li>
+                        	<a href="?page={{ next_page }}">&raquo;</a>
+                    	</li>
+                    {% endif %}
                 </ul>
             </div>
         </div>
         <!-- /.row -->
+        
+        
 
         <hr>
 

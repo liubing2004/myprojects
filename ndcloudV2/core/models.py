@@ -15,6 +15,10 @@ class UserProfile(models.Model):
 class ProjectProfile(models.Model):
     user = models.ForeignKey(User)
     name = models.CharField(max_length=200, default="")
+    profile_image = models.CharField(max_length=200, default="")
+    threedmodel = models.CharField(max_length=200, default="")
+    texture = models.CharField(max_length=200, default="")
+    
     status = models.IntegerField(default=0)
     
     def __str__(self):

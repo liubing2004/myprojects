@@ -4,14 +4,15 @@
 <head>
 		<title>3d model loader</title>
 		<meta charset="utf-8">
-<!-- 		<style type="text/css">
-            .container
-            {
-                width: 20px;
-                height:20px;
-            }
+ 		<style type="text/css">
+            body {
+				font-family: Monospace;
+				background-color: #f0f0f0;
+				margin: 0px;
+				overflow: hidden;
+			}
 
-        </style> -->
+        </style> 
 		<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
 		<script src="/medias/dist/js/three.min.js"></script>
 		<script src="/medias/dist/js/TrackballControls.js"></script>
@@ -19,11 +20,13 @@
 		<script src="/medias/dist/js/MTLLoader.js"></script>
 		<script src="/medias/dist/js/Detector.js"></script>
 		<script src="/medias/dist/js/stats.min.js"></script>
+		<script src="/medias/dist/js/OBJLoader.js"></script>
 		
 	</head>
 
 	<body>		
-	<div id="container"></div>
+	<div id="container">
+	</div>
 	<script>
 
 			if ( ! Detector.webgl ) Detector.addGetWebGLMessage();
@@ -33,8 +36,8 @@
 			var camera, controls, scene, renderer;
 
 			var cross;
-			var render_width = 600;
-			var render_height = 400;
+			var render_width = window.innerWidth;
+			var render_height = window.innerHeight;
 
 			init();
 			animate();
@@ -77,33 +80,23 @@
 				var onError = function ( xhr ) {
 				};
 				
-				var texture = new THREE.Texture();
-			    var loader = new THREE.ImageLoader( manager );
-			    loader.load( '/medias/upload/{{project.id}}/original_models/normal.png', function ( image ) {
-			        console.log('load image');
-			        texture.image = image;
-			        texture.needsUpdate = true;
-			    } );
-
 
 				// model
 				// prepare loader and load the model
-				var loader = new THREE.OBJMTLLoader();
-				loader.load('/medias/upload/{{project.id}}/original_models/normal.obj', 
-						'/medias/upload/{{project.id}}/original_models/normal.obj.mtl', 
+				{% if loader == "OBJMTLLoader"  %}
+				
+				
+ 				var loader = new THREE.OBJMTLLoader();
+				loader.load('/medias/upload/{{project.id}}/original_models/{{project.threedmodel}}', 
+						'/medias/upload/{{project.id}}/original_models/{{project.texture}}', 
 						function(object) {  
 					var scale = 1;
 					object.traverse( function ( child ) {
 
 						if ( child instanceof THREE.Mesh ) {							
-			                console.log('child', child);							
+			                console.log('child', child);	
  							child.geometry.computeBoundingBox ();
  				            var bBox = child.geometry.boundingBox;
-
- 				            // compute overall bbox
-/*  				            console.log( bBox.min.x+"<x<"+ bBox.max.x);
- 				            console.log( bBox.min.y+"<y<"+ bBox.max.y);
- 				            console.log( bBox.min.z+"<z<"+ bBox.max.z); */
  				            var disx = -(bBox.min.x + bBox.max.x)/2;
  				            var disy = -(bBox.min.y + bBox.max.y)/2;
  				            var disz = -(bBox.min.z + bBox.max.z)/2;
@@ -119,12 +112,55 @@
 
 				  object.scale.set(scale, scale, scale);
 				  scene.add(object);
-				}, onProgress, onError);
+				}, onProgress, onError); 
+				
+				{% else %}
+				
+				var texture = new THREE.Texture();
+	    		var loader = new THREE.ImageLoader( manager );
+	    		loader.load( "/medias/dist/image/material/{{texture_url}}", function ( image ) {
+	        		console.log('load image');
+	        		texture.image = image;
+	        		texture.needsUpdate = true;
+	    		} );
+				
+				 var loader = new THREE.OBJLoader( manager );
+                 loader.load( '/medias/upload/{{project.id}}/original_models/{{project.threedmodel}}', function ( object ) {
+                		var scale = 1;
+                        object.traverse( function ( child ) {
+
+                                if ( child instanceof THREE.Mesh ) {
+
+                                        child.material.map = texture;
+                                        child.geometry.computeBoundingBox ();
+             				            var bBox = child.geometry.boundingBox;
+             				            var disx = -(bBox.min.x + bBox.max.x)/2;
+             				            var disy = -(bBox.min.y + bBox.max.y)/2;
+             				            var disz = -(bBox.min.z + bBox.max.z)/2;
+             				            console.log(disx+","+disy+","+disz);
+             				            child.geometry.applyMatrix( new THREE.Matrix4().makeTranslation( disx, disy, disz) )
+             							child.geometry.verticesNeedUpdate = true;
+            							scale = Math.max (100/(bBox.max.x-bBox.min.x), 100/(bBox.max.y-bBox.min.y));
+            							scale = Math.max (100/(bBox.max.z-bBox.min.z), scale);
+
+                                }
+                               
+
+                        } );
+
+                        object.scale.set(scale, scale, scale);
+                        scene.add( object );
+
+                }, onProgress, onError );
+
+			    {% endif %}	
+
 				
 
 				// renderer
-				renderer = new THREE.WebGLRenderer( { antialias: true } );
+				renderer = new THREE.WebGLRenderer( { antialias: true, preserveDrawingBuffer: true } );
 				renderer.setSize( render_width, render_height);
+				//renderer.setClearColorHex( 0xffffff, 1 );
 				container = document.getElementById("container");
 				document.body.appendChild( container );
 				container.appendChild( renderer.domElement );
@@ -148,6 +184,7 @@
 			}
 
 		</script>
+		<canvas width="800" height="600" style="width: 800px; height: 600px;"></canvas>
 	</body>
 </html>
 

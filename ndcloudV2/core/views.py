@@ -9,8 +9,9 @@ from django.conf import settings
 from django.contrib.auth.models import User
 from core.models import *
 import os, zipfile
-
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 import utils
+from matplotlib.font_manager import path
 
 # Create your views here.
 def index(request):
@@ -97,32 +98,72 @@ def upload_project(request):
     if request.FILES == None or len(request.FILES.items())==0:
         return render_internal(request,'myaccount/upload.html',{})
     
-    for key, file in request.FILES.items():
-        unzipped = zipfile.ZipFile(file)
+    project_name = request.POST.get("project_name", "").strip()
+    project_file = request.FILES.get("project")
+    project_image = request.FILES.get("project_image")
+    is3dmodel = (request.POST.get("is3dmodel")=="on")
+    
+    print is3dmodel, project_name, project_file, project_image
+    
+    user = request.user
+    unzipped = zipfile.ZipFile(project_file)
+    if (not is3dmodel):        
         for img_name in unzipped.namelist():
             if not utils.isValidImageName(img_name):
                 return render_internal(request,'myaccount/upload.html',{})
+        status = utils.ProjectStatus.submit
+        project_profile = ProjectProfile(user=user, name=project_name, status=status, profile_image=project_image.name)
+        project_profile.save()
+        
+    else:
+        for f in unzipped.namelist():
+            if f.endswith("obj"):
+                threemodel = f.split("/")[-1]
+            elif f.endswith("mtl"):
+                texture = f.split("/")[-1]
+        status = utils.ProjectStatus.success
+        project_profile = ProjectProfile(user=user, name=project_name, status=status, 
+                                         profile_image=project_image.name, 
+                                         threedmodel = threemodel,
+                                         texture = texture)
+        project_profile.save()
+
+   
     
+    original_pic_directory = settings.BASE_DIR+"/medias/upload/%d/original/" %(project_profile.id)
+    if not os.path.exists(original_pic_directory):
+        os.makedirs(original_pic_directory)
+        
+    original_model_directory = settings.BASE_DIR+"/medias/upload/%d/original_models/" %(project_profile.id)
+    if not os.path.exists(original_model_directory):
+        os.makedirs(original_model_directory)
     
-    project_name = request.POST.get("name", "").strip()
-    user = request.user
-    project_profile = ProjectProfile(user=user, name=project_name)
-    project_profile.save()
+    if is3dmodel:
+        path = original_model_directory + project_file.name
+        outpath = original_model_directory
+    else:
+        path = original_pic_directory + project_file.name
+        outpath = original_pic_directory
     
-    directory = settings.BASE_DIR+"/medias/upload/%d/original/" %(project_profile.id)
-    if not os.path.exists(directory):
-        os.makedirs(directory)
-    
-    for key, file in request.FILES.items():
-        path = directory + file.name
-        print path
-        dest = open(path, 'w')
-        if file.multiple_chunks:
-            for c in file.chunks():
+    print path
+    dest = open(path, 'w')
+    if project_file.multiple_chunks:
+        for c in project_file.chunks():
                 dest.write(c)
-        else:
-            dest.write(file.read())
-        dest.close()
+    else:
+        dest.write(project_file.read())
+    dest.close()
+    
+    utils.extractZipfile(path, outpath)
+    os.remove(path)
+    
+    profile_image_path = settings.BASE_DIR+"/medias/upload/%d/%s" %(project_profile.id, project_profile.profile_image);
+    dest = open(profile_image_path, 'w')
+    if project_image.multiple_chunks:
+        for c in project_image.chunks():
+                dest.write(c)
+    else:
+        dest.write(project_image.read())
     
     return render_internal(request, 'myaccount/upload_confirm.html', {})
 
@@ -130,7 +171,13 @@ def upload_project(request):
 
 def project_3dview(request, project_id):
     project = get_object_or_404(ProjectProfile, pk=project_id)
-    return render_internal(request, 'ndmodel/project_3dview.html', {'project':project})
+    texture_img = request.GET.get("color", "")
+    if texture_img == "" and project.texture != "":
+        loader = "OBJMTLLoader"
+    else:
+        loader = "OBJLoader"
+    
+    return render_internal(request, 'ndmodel/project_3dview.html', {'project':project, 'texture_url':texture_img, "loader":loader})
 
 def project_detail(request, project_id):
     project = get_object_or_404(ProjectProfile, pk=project_id)
@@ -144,8 +191,40 @@ def project_detail(request, project_id):
 
 def project_list(request):
     projects = list(ProjectProfile.objects.filter(status = utils.ProjectStatus.success))
-    print "project size:", len(projects)
-    return render_internal(request, 'ndmodel/project_list.html', {'projects':projects, 'projects_size':len(projects)})
+    paginator = Paginator(projects, 20) # Show 20 contacts per page
+    
+    page = request.GET.get('page')
+    try:
+        page = int(page)
+    except Exception:
+        page = 1
+    
+    projects = paginator.page(page)
+    
+    start_page = ((page-1) / 5) * 5 + 1
+    end_page = ((page-1) / 5 +1) * 5
+    if end_page > paginator.num_pages:
+        end_page = paginator.num_pages
+    
+    if start_page>5:
+        pre_page = start_page - 1
+    else:
+        pre_page = None
+      
+    if end_page<=5 and end_page<paginator.num_pages:
+        next_page = end_page + 1
+    else:
+        next_page = None
+    
+    
+    return render_internal(request, 'ndmodel/project_list.html', 
+                           {'projects':projects, 
+                            'projects_size':len(projects),
+                            'start_page':start_page,
+                            'end_page':end_page,
+                            'page_range':range(start_page, end_page+1),
+                            'pre_page':pre_page,
+                            'next_page':next_page})
     
 def aboutus(request):
 	return render_internal(request, 'index/aboutus.html', {})
@@ -155,6 +234,7 @@ def aboutus(request):
 internal render function
 """    
 def render_internal(request, url, dirs):
+    print dirs
     new_dirs = dirs
     if request.user.id != None:
         uf = UserProfile.objects.get(user=request.user)

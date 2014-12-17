@@ -4,15 +4,17 @@
        <div class="row">
 
            <div class="col-md-8">
-               <div class="embed-responsive embed-responsive-4by3">
- 					<iframe class="embed-responsive-item" src="/project3dview/{{project.id}}"></iframe>
-			</div>
+					<div class="embed-responsive embed-responsive-4by3">
+	 					<iframe id="iframe_3dview" name="iframe_3dview" class="embed-responsive-item" 
+	 					src="/project3dview/{{project.id}}" width="100%" frameborder="5" >
+	 					</iframe>
+	 				</div> 
            </div>
 
            <div class="col-md-4">
-           	   <h3>Project Name</h3>
+           	   <h3>Name</h3>
            	   <p>{{project.name}}</p>
-               <h3>Project Description</h3>
+               <h3>Description</h3>
                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam viverra euismod odio, gravida pellentesque urna varius vitae. Sed dui lorem, adipiscing in adipiscing et, interdum nec metus. Mauris ultricies, justo eu convallis placerat, felis enim.</p>
                <h3>Owner</h3>
                <p>{{owner_uf.name}}</p>
@@ -20,6 +22,81 @@
 
        </div>
        <!-- /.row -->
+       <div class="clearfix"></div>
+       <div class="material_block">
+        <div class="row">    
+           <div class="col-md-8">
+               <h3>Material</h3>
+           </div>   
+         </div>
+    	<div class="row">     
+			<ul class="nav nav-tabs nav-stacked col-md-2">
+		  		<li class="active"><a href="#tab_plastic" data-toggle="tab">Plastic</a></li>
+		  		<li><a href="#tab_resin" data-toggle="tab">Resin</a></li>
+		  		<li><a href="#tab_multicolor" data-toggle="tab">Multicolor</a></li>
+			</ul>
+			<div class="tab-content col-md-6">
+		        <div class="tab-pane active" id="tab_plastic">
+		            <p class="print_material_description">Plastic is a great starter material. Strong, with a fairly good level of detail and slightly flexible, 
+		            it comes in a wide range of colors. If you're not sure which material to go with, plastic is a great all rounder.
+		            </p>
+		            <div class="clearfix"></div>
+		            <div class="material-selection">
+		            	<label class="title">Available Colors</label>
+		            	<ul class="swatch-wrapper-list list-unstyled list-inline">		
+		            		<li class="swatch-wrapper" data-value="white_plastic.png">
+		            			<img class="swatch-img" src="/medias/dist/image/material/white_plastic.png" alt="">
+		            			<div class="swatch-label">White</div>
+		            		</li>  
+		            		<li class="swatch-wrapper" data-value="black_plastic.png">
+		            			<img class="swatch-img" src="/medias/dist/image/material/black_plastic.png" alt="">
+		            			<div class="swatch-label">Black</div>
+		            		</li>            	    
+		            		<li class="swatch-wrapper" data-value="yellow_plastic.png">
+		            			<img class="swatch-img" src="/medias/dist/image/material/yellow_plastic.png" alt="">
+		            			<div class="swatch-label">Yellow</div>
+		            		</li>
+ 		            		<li class="swatch-wrapper" data-value="blue_plastic.png">
+		            			<img class="swatch-img" src="/medias/dist/image/material/blue_plastic.png" alt="">
+		            			<div class="swatch-label">Blue</div>
+		            		</li> 
+		            		<li class="swatch-wrapper" data-value="red_plastic.png">
+		            			<img class="swatch-img" src="/medias/dist/image/material/red_plastic.png" alt="">
+		            			<div class="swatch-label">Red</div>
+		            		</li> 
+		            	</ul>
+		            </div>
+		            
+		        </div>
+		        <div class="tab-pane" id="tab_resin">
+		            <p class="print_material_description">Resin is a rigid, glassy material with a smooth surface, perfect for high detailed visualization. 
+		            	Moving parts work quite well. It comes in black, white and translucent or painted in a wide range of colors.
+		            </p>
+		            <div class="clearfix"></div>
+		        </div>
+		        <div class="tab-pane" id="tab_multicolor">
+		            <p class="print_material_description">A plaster-like material that is colored as it prints. Excellent for purely decorative items 
+		            but its brittle nature means shocks or friction should be avoided. Contact with water should also be avoided.
+		            </p>
+		            <div class="clearfix"></div>
+		            <div class="material-selection">
+		            	<label class="title">Available Finishes</label>
+		            	<ul class="swatch-wrapper-list list-unstyled list-inline">		            	    
+		            		<li class="swatch-wrapper" data-value="">
+		            			<img class="swatch-img" src="/medias/dist/image/material/multicolor_raw.png" alt="">
+		            			<div class="swatch-label">Raw</div>
+		            		</li>
+ 		            		<li class="swatch-wrapper" data-value="">
+		            			<img class="swatch-img" src="/medias/dist/image/material/multicolor_raw.png" alt="">
+		            			<div class="swatch-label">Matte Varnish</div>
+		            		</li> 
+		            	</ul>
+		            </div>
+		        </div>
+			</div><!-- tab content -->
+		</div>
+	</div>
+      
 
        <!-- Related Projects Row -->
        {% if owner_other_projects  %}
@@ -41,8 +118,21 @@
        </div>
        {% endif %}
        <!-- /.row -->
-
-       <hr>
+       
+	<script>
+		jQuery(document).ready(function() {
+	
+	    $(document).on("click", ".swatch-wrapper", function(){
+	        var value =  $(this).attr("data-value");
+	        console.log("here is value:"+value);
+	        $("#iframe_3dview").attr('src',"/project3dview/{{project.id}}?color="+value);
+	        return false;
+	    });
+	
+	    $(".swatch-wrapper").css( "cursor", "pointer" );
+	
+	});	
+	</script>
 
 
 
