@@ -4,9 +4,9 @@
        <div class="row">
 
            <div class="col-md-8">
-					<div class="embed-responsive embed-responsive-4by3">
+					<div class="embed-responsive embed-responsive-4by3" >
 	 					<iframe id="iframe_3dview" name="iframe_3dview" class="embed-responsive-item" 
-	 					src="/project3dview/{{project.id}}" width="100%" frameborder="5" >
+	 					src="/project3dview/{{project.id}}" width="100%" frameborder="5" style="border:2px solid grey">
 	 					</iframe>
 	 				</div> 
            </div>
@@ -21,6 +21,12 @@
            </div>
 
        </div>
+       <div class="row">
+       		<div class="col-md-3">
+       			<div id="slider-1" style="background: linear-gradient(to right, black, white); height:10px; margin:5px"></div>
+       		</div>
+       </div>
+
        <!-- /.row -->
        <div class="clearfix"></div>
        <div class="material_block">
@@ -98,7 +104,7 @@
 	</div>
       
 
-       <!-- Related Projects Row -->
+<!--        Related Projects Row
        {% if owner_other_projects  %}
        <div class="row">
            <div class="col-lg-12">
@@ -117,7 +123,7 @@
            {% endfor %}
        </div>
        {% endif %}
-       <!-- /.row -->
+       /.row -->
        
 	<script>
 		jQuery(document).ready(function() {
@@ -130,6 +136,18 @@
 	    });
 	
 	    $(".swatch-wrapper").css( "cursor", "pointer" );
+	    
+	    $( "#slider-1" ).slider({
+	    	min:0,
+	    	max:255,
+            value: 200,
+            slide: function( event, ui ) {
+            	console.log("value:"+ui.value);
+            	$("#iframe_3dview").attr('src',"/project3dview/{{project.id}}?background="+ ui.value );
+               //$( "#price" ).val( "$" + ui.values[ 0 ] + " - $" + ui.values[ 1 ] );
+            }
+        });
+
 	
 	});	
 	</script>

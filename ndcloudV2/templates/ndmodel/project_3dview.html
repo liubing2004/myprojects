@@ -161,6 +161,8 @@
 				renderer = new THREE.WebGLRenderer( { antialias: true, preserveDrawingBuffer: true } );
 				renderer.setSize( render_width, render_height);
 				//renderer.setClearColorHex( 0xffffff, 1 );
+				renderer.setClearColorHex( {{background_color}}, 1 );
+				
 				container = document.getElementById("container");
 				document.body.appendChild( container );
 				container.appendChild( renderer.domElement );
@@ -184,7 +186,6 @@
 			}
 
 		</script>
-		<canvas width="800" height="600" style="width: 800px; height: 600px;"></canvas>
 	</body>
 </html>
 

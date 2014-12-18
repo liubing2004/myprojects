@@ -172,12 +172,16 @@ def upload_project(request):
 def project_3dview(request, project_id):
     project = get_object_or_404(ProjectProfile, pk=project_id)
     texture_img = request.GET.get("color", "")
+    background_color = int(request.GET.get("background", "200"))
+    background_color_hex = '0x'+''.join(map(chr, (background_color, background_color, background_color))).encode('hex')
     if texture_img == "" and project.texture != "":
         loader = "OBJMTLLoader"
     else:
         loader = "OBJLoader"
     
-    return render_internal(request, 'ndmodel/project_3dview.html', {'project':project, 'texture_url':texture_img, "loader":loader})
+    return render_internal(request, 'ndmodel/project_3dview.html', 
+                           {'project':project, 'texture_url':texture_img, 
+                            "loader":loader, "background_color":background_color_hex})
 
 def project_detail(request, project_id):
     project = get_object_or_404(ProjectProfile, pk=project_id)
