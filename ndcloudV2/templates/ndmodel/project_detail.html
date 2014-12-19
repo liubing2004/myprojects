@@ -130,8 +130,9 @@
 	
 	    $(document).on("click", ".swatch-wrapper", function(){
 	        var value =  $(this).attr("data-value");
-	        console.log("here is value:"+value);
-	        $("#iframe_3dview").attr('src',"/project3dview/{{project.id}}?color="+value);
+	        var curr_url = $("#iframe_3dview").attr("src");
+	        var background = getParameterByName("background", curr_url);
+	        $("#iframe_3dview").attr('src',"/project3dview/{{project.id}}?color="+value+"&background="+background);
 	        return false;
 	    });
 	
@@ -143,13 +144,20 @@
             value: 200,
             slide: function( event, ui ) {
             	console.log("value:"+ui.value);
-            	$("#iframe_3dview").attr('src',"/project3dview/{{project.id}}?background="+ ui.value );
-               //$( "#price" ).val( "$" + ui.values[ 0 ] + " - $" + ui.values[ 1 ] );
+            	var curr_url = $("#iframe_3dview").attr("src");
+            	var color = getParameterByName("color", curr_url);
+            	console.log("curr_url:"+curr_url+color);
+            	$("#iframe_3dview").attr('src',"/project3dview/{{project.id}}?background="+ ui.value +"&color="+color);
             }
         });
 
 	
 	});	
+		
+		function getParameterByName(name, url) {			 
+		    var match = RegExp('[?&]' + name + '=([^&]*)').exec(url);		 
+		    return match ?decodeURIComponent(match[1].replace(/\+/g, ' ')): null;
+		}
 	</script>
 
 

@@ -165,14 +165,22 @@ def upload_project(request):
     else:
         dest.write(project_image.read())
     
-    return render_internal(request, 'myaccount/upload_confirm.html', {})
+    #return render_internal(request, 'myaccount/upload_confirm.html', {})
+    return redirect("/projectdetail/%d" %(project_profile.id))
 
    
 
 def project_3dview(request, project_id):
     project = get_object_or_404(ProjectProfile, pk=project_id)
     texture_img = request.GET.get("color", "")
-    background_color = int(request.GET.get("background", "200"))
+    if texture_img == "null":
+        texture_img = ""
+    try:
+        background_color = int(request.GET.get("background"))
+    except:
+        background_color = 200;
+    
+    print texture_img, background_color
     background_color_hex = '0x'+''.join(map(chr, (background_color, background_color, background_color))).encode('hex')
     if texture_img == "" and project.texture != "":
         loader = "OBJMTLLoader"

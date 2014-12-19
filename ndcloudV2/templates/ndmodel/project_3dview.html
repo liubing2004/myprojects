@@ -27,6 +27,9 @@
 	<body>		
 	<div id="container">
 	</div>
+	<div id="progress">
+	loading...
+	</div>
 	<script>
 
 			if ( ! Detector.webgl ) Detector.addGetWebGLMessage();
@@ -34,6 +37,8 @@
 			var container, stats;
 
 			var camera, controls, scene, renderer;
+			
+			var load_complete = 0;
 
 			var cross;
 			var render_width = window.innerWidth;
@@ -43,6 +48,7 @@
 			animate();
 
 			function init() {
+				load_complete = 0;
 				camera = new THREE.PerspectiveCamera( 60, window.innerWidth / window.innerHeight, 0.01, 1e10 );
 				camera.position.x = 100;
 				camera.position.y = 100;
@@ -70,15 +76,18 @@
 
 				};
 
+				
 				var onProgress = function ( xhr ) {
 					if ( xhr.lengthComputable ) {
 						var percentComplete = xhr.loaded / xhr.total * 100;
 						console.log( Math.round(percentComplete, 2) + '% downloaded' );
+						load_complete = Math.round(percentComplete, 2);
 					}
 				};
 
 				var onError = function ( xhr ) {
 				};
+				
 				
 
 				// model
@@ -93,8 +102,7 @@
 					var scale = 1;
 					object.traverse( function ( child ) {
 
-						if ( child instanceof THREE.Mesh ) {							
-			                console.log('child', child);	
+						if ( child instanceof THREE.Mesh ) {								
  							child.geometry.computeBoundingBox ();
  				            var bBox = child.geometry.boundingBox;
  				            var disx = -(bBox.min.x + bBox.max.x)/2;
@@ -112,6 +120,7 @@
 
 				  object.scale.set(scale, scale, scale);
 				  scene.add(object);
+				  load_complete = 100;
 				}, onProgress, onError); 
 				
 				{% else %}
@@ -125,7 +134,8 @@
 	    		} );
 				
 				 var loader = new THREE.OBJLoader( manager );
-                 loader.load( '/medias/upload/{{project.id}}/original_models/{{project.threedmodel}}', function ( object ) {
+                 loader.load( '/medias/upload/{{project.id}}/original_models/{{project.threedmodel}}', 
+                		 function ( object ) {
                 		var scale = 1;
                         object.traverse( function ( child ) {
 
@@ -150,13 +160,14 @@
 
                         object.scale.set(scale, scale, scale);
                         scene.add( object );
+                        load_complete = 100;
 
                 }, onProgress, onError );
 
 			    {% endif %}	
 
-				
-
+			    
+			
 				// renderer
 				renderer = new THREE.WebGLRenderer( { antialias: true, preserveDrawingBuffer: true } );
 				renderer.setSize( render_width, render_height);
@@ -167,6 +178,7 @@
 				document.body.appendChild( container );
 				container.appendChild( renderer.domElement );
 				window.addEventListener( 'resize', onWindowResize, false );
+				
 
 			}
 
@@ -183,6 +195,9 @@
 				controls.update();
 				camera.lookAt( scene.position );
 				renderer.render( scene, camera );
+				if (load_complete>=100){
+					document.getElementById('progress').style.display = 'none';
+				}
 			}
 
 		</script>
