@@ -18,14 +18,23 @@
            
 
            <div class="col-md-6">
-               <div id="price" >
-               	<h3>Price</h3>
-               	<div id="unit_price" >
-               		<p></p>
-               	</div>
+           	 	<div id="price" >
+                	<div class="col-md-6">
+               			<h3>Total Price</h3>
+               		</div>
+               		<div id="unit_price" class="col-md-3">
+               			<h3>111</h3>
+               		</div>
+               		<div class="col-md-3">
+               			<input type="submit" class="btn btn-success btn-large" value="Checkout">
+               		</div>
                </div> 
+               <div class="clearfix"></div>
                <div id="printsettings">
-               		<h3>Print Settings</h3>
+                	<div class="col-md-6">
+               			<h3>Print Settings</h3>
+               		</div>
+               		<div class="clearfix"></div>
 	          		<div class="printsetting input-group input-group-sm" id="printsetting">
 	        			<label class="col-sm-2">Scale: </label>
 	          			<div class="col-sm-2">
@@ -70,14 +79,16 @@
 	          		<div class="clearfix"></div>
       			</div>
       			
-      		   <div id="description">
+      			
+      			
+      		  <!--  <div id="description">
                		<h3>Description</h3>
                		<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. 
                			Nam viverra euismod odio, gravida pellentesque urna varius vitae. 
                			Sed dui lorem, adipiscing in adipiscing et, interdum nec metus. 
                			Mauris ultricies, justo eu convallis placerat, felis enim.
                		</p>
-               </div>
+               </div> -->
             </div>
                
        </div>
@@ -354,7 +365,9 @@
 		$.ajax({
 			url:"/getprice?color="+color+"&material="+material+"&finish="+finish+"&x="+size_x+"&y="+size_y+"&z="+size_z+"&sizeunit="+sizeunit+"&projectid="+{{project.id}},
 			success:function(result){
-				$("#unit_price").html("<p>"+result+"</p>");
+				if (parseFloat(result)>0){
+					$("#unit_price").html("<h3>$"+result+"</h3>");
+				}
 		    }
 		});
 
