@@ -43,9 +43,15 @@
 			var cross;
 			var render_width = window.innerWidth;
 			var render_height = window.innerHeight;
+			
+     		var disx_max = 0; // model width
+    		var disy_max = 0; // model length
+    		var disz_max = 0; // model height
 
 			init();
 			animate();
+			
+			
 
 			function init() {
 				load_complete = 0;
@@ -108,11 +114,23 @@
  				            var disx = -(bBox.min.x + bBox.max.x)/2;
  				            var disy = -(bBox.min.y + bBox.max.y)/2;
  				            var disz = -(bBox.min.z + bBox.max.z)/2;
- 				            console.log(disx+","+disy+","+disz);
+
  				            child.geometry.applyMatrix( new THREE.Matrix4().makeTranslation( disx, disy, disz) )
  							child.geometry.verticesNeedUpdate = true;
 							scale = Math.max (100/(bBox.max.x-bBox.min.x), 100/(bBox.max.y-bBox.min.y));
 							scale = Math.max (100/(bBox.max.z-bBox.min.z), scale);
+							
+							if (disx_max<bBox.max.x-bBox.min.x){
+								disx_max = bBox.max.x-bBox.min.x;
+							}
+							
+							if (disy_max < bBox.max.y-bBox.min.y){
+								disy_max = bBox.max.y-bBox.min.y;
+							}
+							
+							if (disz_max <  bBox.max.z - bBox.min.z){
+								disz_max = bBox.max.z - bBox.min.z;
+							} 
 				            
 						}
 
@@ -121,6 +139,9 @@
 				  object.scale.set(scale, scale, scale);
 				  scene.add(object);
 				  load_complete = 100;
+				  console.log("disx_max, disy_max, disz_max="+disx_max+","+disy_max+","+disz_max);
+				  parent.setDimensions(disx_max, disy_max, disz_max);
+				  
 				}, onProgress, onError); 
 				
 				{% else %}
@@ -137,9 +158,9 @@
                  loader.load( '/medias/upload/{{project.id}}/original_models/{{project.threedmodel}}', 
                 		 function ( object ) {
                 		var scale = 1;
-/*                 		var disx_max = 0;
+                 		var disx_max = 0;
                 		var disy_max = 0;
-                		var disz_max = 0; */
+                		var disz_max = 0; 
                         object.traverse( function ( child ) {
 
                                 if ( child instanceof THREE.Mesh ) {
@@ -150,23 +171,22 @@
              				            var disx = -(bBox.min.x + bBox.max.x)/2;
              				            var disy = -(bBox.min.y + bBox.max.y)/2;
              				            var disz = -(bBox.min.z + bBox.max.z)/2;
-             				            console.log(disx+","+disy+","+disz);
              				            child.geometry.applyMatrix( new THREE.Matrix4().makeTranslation( disx, disy, disz) )
              							child.geometry.verticesNeedUpdate = true;
             							scale = Math.max (100/(bBox.max.x-bBox.min.x), 100/(bBox.max.y-bBox.min.y));
             							scale = Math.max (100/(bBox.max.z-bBox.min.z), scale);
             							
-/*             							if (disx_max<Math.abs(disx)){
-            								disx_max = Math.abs(disx);
+             							if (disx_max<bBox.max.x-bBox.min.x){
+            								disx_max = bBox.max.x-bBox.min.x;
             							}
             							
-            							if (disy_max<Math.abs(disy)){
-            								disy_max = Math.abs(disy);
+            							if (disy_max < bBox.max.y-bBox.min.y){
+            								disy_max = bBox.max.y-bBox.min.y;
             							}
             							
-            							if (disz_max<Math.abs(disz)){
-            								disz_max = Math.abs(disz);
-            							} */
+            							if (disz_max <  bBox.max.z - bBox.min.z){
+            								disz_max = bBox.max.z - bBox.min.z;
+            							} 
 
                                 }
                                
@@ -177,6 +197,7 @@
                         scene.add( object );
                         load_complete = 100;
 						console.log("disx_max, disy_max, disz_max="+disx_max+","+disy_max+","+disz_max);
+						parent.setDimensions(disx_max, disy_max, disz_max);
 
                 }, onProgress, onError );
 
@@ -187,7 +208,6 @@
 				// renderer
 				renderer = new THREE.WebGLRenderer( { antialias: true, preserveDrawingBuffer: true } );
 				renderer.setSize( render_width, render_height);
-				//renderer.setClearColorHex( 0xffffff, 1 );
 				renderer.setClearColorHex( {{background_color}}, 1 );
 				
 				container = document.getElementById("container");

@@ -4,32 +4,84 @@
        <div class="row">
 
            <div class="col-md-6">
-					<div class="embed-responsive embed-responsive-4by3" style="border:2px solid grey;disyplay:none" >
+           			<h3>{{project.name}} by {{owner_uf.name}}</h3>
+					<div class="embed-responsive embed-responsive-4by3" style="border:2px solid grey;" >
 	 					<iframe id="iframe_3dview" name="iframe_3dview" class="embed-responsive-item" 
-	 					src="/project3dview/{{project.id}}" frameborder="0" onmousewheel >
+	 					src="/project3dview/{{project.id}}?color={{default_color_url}}" frameborder="0" onmousewheel >
 	 					</iframe>
 	 				</div> 
+	 				<div style="border:1px solid grey;">
+       					<div id="slider-1" class="col-sm-3" style="background: linear-gradient(to right, black, white); height:10px; margin:5px" ></div>
+       				</div>
 	 				
            </div>
            
-           <div class="col-md-1">
-           </div>
 
-           <div class="col-md-5">
-           	   <h3>Name</h3>
-           	   <p>{{project.name}}</p>
-               <h3>Description</h3>
-               <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam viverra euismod odio, gravida pellentesque urna varius vitae. Sed dui lorem, adipiscing in adipiscing et, interdum nec metus. Mauris ultricies, justo eu convallis placerat, felis enim.</p>
-               <h3>Owner</h3>
-               <p>{{owner_uf.name}}</p>
-           </div>
+           <div class="col-md-6">
+               <div id="price" >
+               	<h3>Price</h3>
+               	<div id="unit_price" >
+               		<p></p>
+               	</div>
+               </div> 
+               <div id="printsettings">
+               		<h3>Print Settings</h3>
+	          		<div class="printsetting input-group input-group-sm" id="printsetting">
+	        			<label class="col-sm-2">Scale: </label>
+	          			<div class="col-sm-2">
+	          				<input type="text" class="form-control" name="modelsize_x"  id="modelsize_x" value="{{project.modelx}}"> 
+	          			</div>
+	          			<label class="col-sm-1" for="modelsize_y">x</label>
+	          			<div class="col-sm-2">
+	          				<input type="text" class="form-control" name="modelsize_y" id="modelsize_y" value="{{project.modely}}"> 
+	          			</div>
+	          			<label  class="col-sm-1">x</label>
+	          			<div class="col-sm-2">
+	          				<input type="text" class="form-control" name="modelsize_z" id="modelsize_z" value="{{project.modelz}}"> 
+	          			</div>
+	          			 <div class="col-sm-2 selectContainer">
+				            <select name="unit" class="form-control" id="modelsizeunit">
+				                <option value="mm">mm</option>
+				                <option value="cm">cm</option>
+				            </select>
+				         </div>      		
+	          		</div>
+					<div class="clearfix"></div>
+	          		<div class="printsetting" id="printsetting">
+	        			<label class="col-sm-2">Material: </label>
+	          			 <div class="col-sm-10" id="material_setting">
+							<p>{{default_material}}</p>
+				         </div>    
+	          		</div>
+					<div class="clearfix"></div>
+	          		<div class="printsetting" id="printsetting">
+	        			<label class="col-sm-2">Color: </label>
+	          			<div id="color_setting" class="col-sm-10" >
+	          				<p>{{default_color}}</p>
+				        </div>    
+	          		</div>
+	          		<div class="clearfix"></div>
+	          		<div class="printsetting" id="printsetting">
+	        			<label class="col-sm-2">Finish: </label>
+	          			<div id="finish_setting" class="col-sm-10" >
+	          				<p></p>
+				        </div>    
+	          		</div>
+	          		<div class="clearfix"></div>
+      			</div>
+      			
+      		   <div id="description">
+               		<h3>Description</h3>
+               		<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. 
+               			Nam viverra euismod odio, gravida pellentesque urna varius vitae. 
+               			Sed dui lorem, adipiscing in adipiscing et, interdum nec metus. 
+               			Mauris ultricies, justo eu convallis placerat, felis enim.
+               		</p>
+               </div>
+            </div>
+               
+       </div>
 
-       </div>
-       <div class="row" >
-       		<div class="col-md-3" >
-       			<div id="slider-1" style="background: linear-gradient(to right, black, white); height:10px; margin:5px" ></div>
-       		</div>
-       </div>
 
        <!-- /.row -->
        <div class="clearfix"></div>
@@ -40,7 +92,7 @@
            </div>   
          </div>
     	<div class="row">     
-			<ul class="nav nav-tabs nav-stacked col-md-2">
+			<ul class="nav nav-tabs nav-stacked col-md-2" id="material_tabs">
 		  		<li class="active"><a href="#tab_plastic" data-toggle="tab">Plastic</a></li>
 		  		<li><a href="#tab_resin" data-toggle="tab">Resin</a></li>
 		  		<li><a href="#tab_alumide" data-toggle="tab">Alumide</a></li>
@@ -56,23 +108,23 @@
 		            <div class="material-selection">
 		            	<label class="title">Available Colors</label>
 		            	<ul class="swatch-wrapper-list list-unstyled list-inline">		
-		            		<li class="swatch-wrapper" data-value="white_plastic.png">
+		            		<li class="swatch-wrapper" data-value="white_plastic.png,White,">
 		            			<img class="swatch-img" src="/medias/dist/image/material/white_plastic.png" alt="">
 		            			<div class="swatch-label">White</div>
 		            		</li>  
-		            		<li class="swatch-wrapper" data-value="black_plastic.png">
+		            		<li class="swatch-wrapper" data-value="black_plastic.png,Black,">
 		            			<img class="swatch-img" src="/medias/dist/image/material/black_plastic.png" alt="">
 		            			<div class="swatch-label">Black</div>
 		            		</li>            	    
-		            		<li class="swatch-wrapper" data-value="yellow_plastic.png">
+		            		<li class="swatch-wrapper" data-value="yellow_plastic.png,Yellow,">
 		            			<img class="swatch-img" src="/medias/dist/image/material/yellow_plastic.png" alt="">
 		            			<div class="swatch-label">Yellow</div>
 		            		</li>
- 		            		<li class="swatch-wrapper" data-value="blue_plastic.png">
+ 		            		<li class="swatch-wrapper" data-value="blue_plastic.png,Blue,">
 		            			<img class="swatch-img" src="/medias/dist/image/material/blue_plastic.png" alt="">
 		            			<div class="swatch-label">Blue</div>
 		            		</li> 
-		            		<li class="swatch-wrapper" data-value="red_plastic.png">
+		            		<li class="swatch-wrapper" data-value="red_plastic.png,Red,">
 		            			<img class="swatch-img" src="/medias/dist/image/material/red_plastic.png" alt="">
 		            			<div class="swatch-label">Red</div>
 		            		</li> 
@@ -104,11 +156,11 @@
 		            <div class="material-selection">
 		            	<label class="title">Available Finishes</label>
 		            	<ul class="swatch-wrapper-list list-unstyled list-inline">		            	    
-		            		<li class="swatch-wrapper" data-value="">
+		            		<li class="swatch-wrapper" data-value=",,Raw">
 		            			<img class="swatch-img" src="/medias/dist/image/material/multicolor_raw.png" alt="">
 		            			<div class="swatch-label">Raw</div>
 		            		</li>
- 		            		<li class="swatch-wrapper" data-value="">
+ 		            		<li class="swatch-wrapper" data-value=",,Matte Varnish">
 		            			<img class="swatch-img" src="/medias/dist/image/material/multicolor_raw.png" alt="">
 		            			<div class="swatch-label">Matte Varnish</div>
 		            		</li> 
@@ -126,23 +178,23 @@
 		            <div class="material-selection">
 		            	<label class="title">Available Colors</label>
 		            	<ul class="swatch-wrapper-list list-unstyled list-inline">		
-		            		<li class="swatch-wrapper" data-value="white_plastic.png">
+		            		<li class="swatch-wrapper" data-value="white_plastic.png,White,">
 		            			<img class="swatch-img" src="/medias/dist/image/material/white_plastic.png" alt="">
 		            			<div class="swatch-label">White</div>
 		            		</li>  
-		            		<li class="swatch-wrapper" data-value="black_plastic.png">
+		            		<li class="swatch-wrapper" data-value="black_plastic.png,Black,">
 		            			<img class="swatch-img" src="/medias/dist/image/material/black_plastic.png" alt="">
 		            			<div class="swatch-label">Black</div>
 		            		</li>            	    
-		            		<li class="swatch-wrapper" data-value="yellow_plastic.png">
+		            		<li class="swatch-wrapper" data-value="yellow_plastic.png,Yellow,">
 		            			<img class="swatch-img" src="/medias/dist/image/material/yellow_plastic.png" alt="">
 		            			<div class="swatch-label">Yellow</div>
 		            		</li>
- 		            		<li class="swatch-wrapper" data-value="blue_plastic.png">
+ 		            		<li class="swatch-wrapper" data-value="blue_plastic.png,Blue,">
 		            			<img class="swatch-img" src="/medias/dist/image/material/blue_plastic.png" alt="">
 		            			<div class="swatch-label">Blue</div>
 		            		</li> 
-		            		<li class="swatch-wrapper" data-value="red_plastic.png">
+		            		<li class="swatch-wrapper" data-value="red_plastic.png,Red,">
 		            			<img class="swatch-img" src="/medias/dist/image/material/red_plastic.png" alt="">
 		            			<div class="swatch-label">Red</div>
 		            		</li> 
@@ -181,10 +233,22 @@
 		jQuery(document).ready(function() {
 	
 	    $(document).on("click", ".swatch-wrapper", function(){
-	        var value =  $(this).attr("data-value");
+	        var data_value =  $(this).attr("data-value");
+	        var res = data_value.split(",");
+	        var color_url = "";
+	        var color = "";
+	        var finish = "";
+	        if (res.length==3){
+	        	color_url = res[0];
+	        	color = res[1];
+	        	finish = res[2];
+	        }
 	        var curr_url = $("#iframe_3dview").attr("src");
 	        var background = getParameterByName("background", curr_url);
-	        $("#iframe_3dview").attr('src',"/project3dview/{{project.id}}?color="+value+"&background="+background);
+	        $("#iframe_3dview").attr('src',"/project3dview/{{project.id}}?color="+color_url+"&background="+background);
+        	$("#color_setting").html("<p>"+color+"</p>");
+        	$("#finish_setting").html("<p>"+finish+"</p>");
+        	updatePrice();
 	        return false;
 	    });
 	
@@ -200,16 +264,103 @@
             	var color = getParameterByName("color", curr_url);
             	console.log("curr_url:"+curr_url+color);
             	$("#iframe_3dview").attr('src',"/project3dview/{{project.id}}?background="+ ui.value +"&color="+color);
+            	
             }
         });
+	    
+	    $('#material_tabs li a').click(function(e) {
+	    	  	$("#material_setting").html("<p>"+$(this).text()+"</p>");		
+	    	  	$("#color_setting").html("<p></p>");
+	        	$("#finish_setting").html("<p></p>");
+	        	updatePrice();
+	    });
+	    
+	    $( "#modelsizeunit" ).change(function() {
+	    	  updatePrice();
+	    });
+	    
+	     $("#modelsize_x").change(function(){
+	    	 if ({{project.modelx}}<=0 && {{project.modely}}<=0 && {{project.modelz}}<=0){
+	    		 return;
+	    	 }
+	    	var sizey = parseFloat($("#modelsize_x").val().trim()) * {{project.modely}}/{{project.modelx}};
+	    	var sizez = parseFloat($("#modelsize_x").val().trim()) * {{project.modelz}}/{{project.modelx}};
+	    	$("#modelsize_y").val(sizey);
+	    	$("#modelsize_z").val(sizez);
+	    	updatePrice();	    	
+	    }	
+	    ); 
+	     
+	     $("#modelsize_y").change(function(){
+	    	 if ({{project.modelx}}<=0 && {{project.modely}}<=0 && {{project.modelz}}<=0){
+	    		 return;
+	    	 }
+	    	var sizex = parseFloat($("#modelsize_y").val().trim()) * {{project.modelx}}/{{project.modely}};
+	    	var sizez = parseFloat($("#modelsize_y").val().trim()) * {{project.modelz}}/{{project.modely}};
+	    	$("#modelsize_x").val(sizex);
+	    	$("#modelsize_z").val(sizez);
+	    	updatePrice();	    	
+	    }	
+	    );
+	     
+	     $("#modelsize_z").change(function(){
+	    	 if ({{project.modelx}}<=0 && {{project.modely}}<=0 && {{project.modelz}}<=0){
+	    		 return;
+	    	 }
+	    	var sizex = parseFloat($("#modelsize_z").val().trim()) * {{project.modelx}}/{{project.modelz}};
+	    	var sizey = parseFloat($("#modelsize_z").val().trim()) * {{project.modely}}/{{project.modelz}};
+	    	$("#modelsize_x").val(sizex);
+	    	$("#modelsize_y").val(sizey);
+	    	updatePrice();	    	
+	    }	
+	    );
+	    
+	    updatePrice();
 	
 	});	
 		
-		function getParameterByName(name, url) {			 
+	function getParameterByName(name, url) {			 
 		    var match = RegExp('[?&]' + name + '=([^&]*)').exec(url);		 
 		    return match ?decodeURIComponent(match[1].replace(/\+/g, ' ')): null;
-		}
-	</script>
+	}
+	
+	 function setDimensions(x, y, z){
+		 minimum = Math.min(x, y, z);
+		 console.log("model size:"+x+","+y+","+z+","+minimum);
+		 x = (x/minimum).toFixed(2);
+		 y = (y/minimum).toFixed(2);
+		 z = (z/minimum).toFixed(2);
+		 
+		 if (parseFloat($("#modelsize_x").val().trim())<=0 
+				 || parseFloat($("#modelsize_y").val().trim())<=0 
+				 || parseFloat($("#modelsize_z").val().trim())<=0 ){
+			 document.getElementById('modelsize_x').value = x;
+			 document.getElementById('modelsize_y').value = y;
+			 document.getElementById('modelsize_z').value = z;	
+			 updatePrice();
+		 }
+
+	}
+	 
+	function updatePrice(){
+		var color = $("#color_setting").text().trim();
+		var material = $("#material_setting").text().trim();
+		var finish = $("#finish_setting").text().trim();
+		var size_x = $("#modelsize_x").val().trim();
+		var size_y = $("#modelsize_y").val().trim();
+		var size_z = $("#modelsize_z").val().trim();
+		var sizeunit = $("#modelsizeunit").val().trim();
+		console.log("update price: "+color+","+material+","+size_x+","+size_y+","+size_z);
+		$.ajax({
+			url:"/getprice?color="+color+"&material="+material+"&finish="+finish+"&x="+size_x+"&y="+size_y+"&z="+size_z+"&sizeunit="+sizeunit+"&projectid="+{{project.id}},
+			success:function(result){
+				$("#unit_price").html("<p>"+result+"</p>");
+		    }
+		});
+
+	}
+	
+   </script>
 
 
 

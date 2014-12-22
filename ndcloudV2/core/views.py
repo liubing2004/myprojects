@@ -4,6 +4,7 @@ from django.contrib.auth import authenticate,logout,login
 from django.core.exceptions import ValidationError
 from django.core.validators import validate_email
 from django.db import transaction
+from django.http import HttpResponse
 
 from django.conf import settings
 from django.contrib.auth.models import User
@@ -195,11 +196,65 @@ def project_detail(request, project_id):
     project = get_object_or_404(ProjectProfile, pk=project_id)
     owner_uf = UserProfile.objects.get(user=project.user)
     owner_other_projects = list((ProjectProfile.objects.filter(user = project.user.id, status = utils.ProjectStatus.success).exclude(id=project_id))[:4])   
-    print "owner other projects:", owner_other_projects
-    print "project owner:", owner_uf
+    default_material = "Plastic"
+    default_color = "White"
+    default_color_url = "white_plastic.png"
     return render_internal(request, 'ndmodel/project_detail.html', 
                            {'project':project, 'owner_uf':owner_uf,
-                            'owner_other_projects':owner_other_projects})    
+                            'owner_other_projects':owner_other_projects,
+                            'default_material':default_material,
+                            'default_color':default_color,
+                            'default_color_url':default_color_url,
+                            })    
+@transaction.atomic
+def getprice(request):
+   priceunit = PriceUnit.objects.all()
+   color = request.GET.get("color", "").strip()
+   material = request.GET.get("material", "").strip()
+   x = request.GET.get("x", "").strip()
+   y = request.GET.get("y", "").strip()
+   z = request.GET.get("z", "").strip()
+   finish = request.GET.get("finish", "").strip()
+   sizeunit = request.GET.get("sizeunit", "").strip()
+   projectId = request.GET.get("projectid", "0")
+   print color, material, x, y, z, sizeunit, projectId
+   error_response = HttpResponse(-1)
+   
+   try:
+       x = float(x)
+       y = float(y)
+       z = float(z)
+       projectId = int(projectId)
+       project = get_object_or_404(ProjectProfile, pk=projectId)
+       if project.modelx == 0 and project.modely == 0 and project.modelz==0:
+           project.modelx = round(x,2)
+           project.modely = round(y,2)
+           project.modelz = round(z,2) 
+           project.save()
+   except:
+       return error_response 
+   
+   priceUnits = list(PriceUnit.objects.filter(unit=sizeunit, material=material))
+   unit_price = 0
+   
+   for pu in priceUnits:
+       print pu.color, pu.finish
+       if len(color)==0 and len(finish)==0:
+           continue
+       elif len(color)>0 and len(finish)==0:
+            if color == pu.color:
+               unit_price = pu.price
+            else:
+                continue
+       elif len(color)==0 and len(finish)>0:
+            if finish == pu.finish:
+                unit_price = pu.price
+            else:
+                continue   
+       else:
+           return error_response            
+   price = unit_price * x * y * z
+   return HttpResponse(price)
 
 def project_list(request):
     projects = list(ProjectProfile.objects.filter(status = utils.ProjectStatus.success))

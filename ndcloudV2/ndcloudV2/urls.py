@@ -20,6 +20,7 @@ urlpatterns = patterns('',
     url(r'^project3dview/(?P<project_id>\d+)$',core_views.project_3dview, name='project_3dview'),
     url(r'^projectlist/$',core_views.project_list, name='project_list' ),
     url(r'^aboutus/$',core_views.aboutus, name='aboutus' ),
+    url(r'^getprice/', core_views.getprice, name='getprice'),
 
     url(r'^admin/', include(admin.site.urls)),
 )
