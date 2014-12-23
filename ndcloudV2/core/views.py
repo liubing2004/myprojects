@@ -20,8 +20,6 @@ def index(request):
 
 def login_view(request):    
     error_messages = list()
-    print request.method
-    print request
     if request.method == 'GET':
         next = request.REQUEST.get('next', "/")
         return render_internal(request,'index/login.html',
@@ -218,7 +216,7 @@ def getprice(request):
    sizeunit = request.GET.get("sizeunit", "").strip()
    projectId = request.GET.get("projectid", "0")
    print color, material, x, y, z, sizeunit, projectId
-   error_response = HttpResponse(-1)
+   error_response = HttpResponse("{\"price_unit\":-1, \"total_price\":-1}")
    
    try:
        x = float(x)
@@ -237,6 +235,7 @@ def getprice(request):
    priceUnits = list(PriceUnit.objects.filter(unit=sizeunit, material=material))
    unit_price = 0
    
+   priceUnitId = 0;
    for pu in priceUnits:
        print pu.color, pu.finish
        if len(color)==0 and len(finish)==0:
@@ -244,17 +243,21 @@ def getprice(request):
        elif len(color)>0 and len(finish)==0:
             if color == pu.color:
                unit_price = pu.price
+               priceUnitId = pu.id
             else:
                 continue
        elif len(color)==0 and len(finish)>0:
             if finish == pu.finish:
                 unit_price = pu.price
+                priceUnitId = pu.id
             else:
                 continue   
        else:
            return error_response            
-   price = unit_price * x * y * z
-   return HttpResponse(price)
+   price = round(unit_price * x * y * z, 2)
+   response = "{\"price_unit\":%d, \"total_price\":%f}" %(priceUnitId, price)
+   print response
+   return HttpResponse(response)
 
 def project_list(request):
     projects = list(ProjectProfile.objects.filter(status = utils.ProjectStatus.success))
@@ -295,6 +298,24 @@ def project_list(request):
     
 def aboutus(request):
 	return render_internal(request, 'index/aboutus.html', {})
+    
+@login_required(login_url='/login')
+@transaction.atomic
+def shopcart(request):
+    profile = UserProfile.objects.get(user=request.user)
+    print request
+    if request.method == 'GET':
+        orders = Order.objects.filter(user = request.user)
+        return render_internal(request,'payment/shopcart.html',{"userprofile":profile, "orders":orders})
+    
+    #post
+    priceUnitId = request.POST.get("priceunitid_hidden") 
+    order = Order(user=request.user, )
+    
+    
+        
+
+    
     
 
 """

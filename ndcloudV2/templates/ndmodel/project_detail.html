@@ -3,9 +3,9 @@
        <!-- Portfolio Item Row -->
        <div class="row">
 
-           <div class="col-md-6">
-           			<h3>{{project.name}} by {{owner_uf.name}}</h3>
-					<div class="embed-responsive embed-responsive-4by3" style="border:2px solid grey;" >
+           <div class="col-md-7">
+<!--            			<h3>{{project.name}} by {{owner_uf.name}}</h3> -->
+					<div class="embed-responsive embed-responsive-16by9" style="border:2px solid grey;" >
 	 					<iframe id="iframe_3dview" name="iframe_3dview" class="embed-responsive-item" 
 	 					src="/project3dview/{{project.id}}?color={{default_color_url}}" frameborder="0" onmousewheel >
 	 					</iframe>
@@ -17,78 +17,72 @@
            </div>
            
 
-           <div class="col-md-6">
-           	 	<div id="price" >
-                	<div class="col-md-6">
-               			<h3>Total Price</h3>
-               		</div>
-               		<div id="unit_price" class="col-md-3">
-               			<h3>111</h3>
-               		</div>
-               		<div class="col-md-3">
-               			<input type="submit" class="btn btn-success btn-large" value="Checkout">
-               		</div>
-               </div> 
-               <div class="clearfix"></div>
-               <div id="printsettings">
+           <div class="col-md-5">
                 	<div class="col-md-6">
                			<h3>Print Settings</h3>
                		</div>
                		<div class="clearfix"></div>
-	          		<div class="printsetting input-group input-group-sm" id="printsetting">
-	        			<label class="col-sm-2">Scale: </label>
-	          			<div class="col-sm-2">
-	          				<input type="text" class="form-control" name="modelsize_x"  id="modelsize_x" value="{{project.modelx}}"> 
-	          			</div>
-	          			<label class="col-sm-1" for="modelsize_y">x</label>
-	          			<div class="col-sm-2">
-	          				<input type="text" class="form-control" name="modelsize_y" id="modelsize_y" value="{{project.modely}}"> 
-	          			</div>
-	          			<label  class="col-sm-1">x</label>
-	          			<div class="col-sm-2">
-	          				<input type="text" class="form-control" name="modelsize_z" id="modelsize_z" value="{{project.modelz}}"> 
-	          			</div>
-	          			 <div class="col-sm-2 selectContainer">
-				            <select name="unit" class="form-control" id="modelsizeunit">
-				                <option value="mm">mm</option>
-				                <option value="cm">cm</option>
-				            </select>
-				         </div>      		
-	          		</div>
-					<div class="clearfix"></div>
-	          		<div class="printsetting" id="printsetting">
-	        			<label class="col-sm-2">Material: </label>
-	          			 <div class="col-sm-10" id="material_setting">
-							<p>{{default_material}}</p>
-				         </div>    
-	          		</div>
-					<div class="clearfix"></div>
-	          		<div class="printsetting" id="printsetting">
-	        			<label class="col-sm-2">Color: </label>
-	          			<div id="color_setting" class="col-sm-10" >
-	          				<p>{{default_color}}</p>
-				        </div>    
-	          		</div>
+               		<div id="settings">
+						<form class="scalesetting form-inline" id="printsetting">
+							<label class="col-sm-2">Scale:</label>
+						  	<input type="text" class="input-small col-sm-2" name="modelsize_x"  id="modelsize_x" value="{{project.modelx}}">
+						 	<p class="col-sm-1">x<p>
+						  	<input type="text" class="input-small col-sm-2" name="modelsize_y" id="modelsize_y" value="{{project.modely}}">
+						   	<p class="col-sm-1">x<p>
+						  	<input type="text" class="input-small col-sm-2" name="modelsize_z" id="modelsize_z" value="{{project.modelz}}">
+						  	<div class="col-sm-2 selectContainer">
+						  	<select name="unit" class="modelsizeunit input-sm" id="modelsizeunit">
+								<option value="mm">mm</option>
+								<option value="cm">cm</option>
+							</select>
+						  </div>    
+						</form>  
+						<div class="clearfix"></div>         		
+		          		<div class="printsetting" id="printsetting">
+		        			<label class="col-sm-2">Material: </label>
+		          			 <div class="col-sm-10" id="material_setting">
+								<p>{{default_material}}</p>
+					         </div>    
+		          		</div>
+		          		<div class="clearfix"></div>
+		          		<div class="printsetting" id="printsetting">
+		        			<label class="col-sm-2">Color: </label>
+		          			<div id="color_setting" class="col-sm-10" >
+		          				<p>{{default_color}}</p>
+					        </div>    
+		          		</div>
+	    				<div class="clearfix"></div>
+		          		<div class="printsetting" id="printsetting">
+		        			<label class="col-sm-2">Finish: </label>
+		          			<div id="finish_setting" class="col-sm-10" >
+		          				<p></p>
+					        </div>    
+		          		</div>
 	          		<div class="clearfix"></div>
-	          		<div class="printsetting" id="printsetting">
-	        			<label class="col-sm-2">Finish: </label>
-	          			<div id="finish_setting" class="col-sm-10" >
-	          				<p></p>
-				        </div>    
-	          		</div>
-	          		<div class="clearfix"></div>
+	          		<hr>
+	          		<div id="price" >
+                	<div class="col-md-6">
+               			<h3>Total Price</h3>
+               		</div>
+               		<div id="total_price" class="col-md-6 text-right">
+               			<h3></h3>
+               		</div>
+               	</div>
+             	<div id="checkout_button">
+             			<form id="checkout" action="{% url 'shopcart' %}" method="post" >
+             			{% csrf_token %}
+             				<input type="hidden" name="price_hidden" id="price_hidden" value="">
+             				<input type="hidden" name="sizex_hidden" id="sizex_hidden" value="">
+             				<input type="hidden" name="sizey_hidden" id="sizey_hidden" value="">
+             				<input type="hidden" name="sizez_hidden" id="sizez_hidden" value="">
+             				<input type="hidden" name="priceunitid_hidden" id="priceunitid_hidden" value="">
+             				<input type="hidden" name="projectid_hidden" value="{{project.id}}">            				
+             				<input type="submit" class="btn btn-success btn-large btn-block pull-right" value="Review & Checkout">
+             			</form>
+             	</div>
+               <div class="clearfix"></div>
+              
       			</div>
-      			
-      			
-      			
-      		  <!--  <div id="description">
-               		<h3>Description</h3>
-               		<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. 
-               			Nam viverra euismod odio, gravida pellentesque urna varius vitae. 
-               			Sed dui lorem, adipiscing in adipiscing et, interdum nec metus. 
-               			Mauris ultricies, justo eu convallis placerat, felis enim.
-               		</p>
-               </div> -->
             </div>
                
        </div>
@@ -98,7 +92,7 @@
        <div class="clearfix"></div>
        <div class="material_block">
         <div class="row">    
-           <div class="col-md-6">
+           <div class="col-md-7">
                <h3>Material</h3>
            </div>   
          </div>
@@ -110,7 +104,7 @@
 		  		<li><a href="#tab_multicolor" data-toggle="tab">Multicolor</a></li>
 		  		<li><a href="#tab_ceramic" data-toggle="tab">Ceramic</a></li>
 			</ul>
-			<div class="tab-content col-md-4">
+			<div class="tab-content col-md-5">
 		        <div class="tab-pane active" id="tab_plastic">
 		            <p class="print_material_description">Plastic is a great starter material. Strong, with a fairly good level of detail and slightly flexible, 
 		            it comes in a wide range of colors. If you're not sure which material to go with, plastic is a great all rounder.
@@ -325,6 +319,19 @@
 	    	updatePrice();	    	
 	    }	
 	    );
+	     
+	     $("#checkout").submit(function(){
+	    	   // Let's find the input to check
+	    	   var $price = $(this).find("input[name=price_hidden]");
+	    	   var $sizex = $(this).find("input[name=sizex_hidden]");
+	    	   var $sizey = $(this).find("input[name=sizey_hidden]");
+	    	   var $sizez = $(this).find("input[name=sizez_hidden]");
+	    	   
+	    	   $price.val($("#total_price").text());
+	    	   $sizex.val($("#modelsize_x").val());
+	    	   $sizey.val($("#modelsize_y").val());
+	    	   $sizez.val($("#modelsize_z").val());
+	    	});
 	    
 	    updatePrice();
 	
@@ -365,9 +372,16 @@
 		$.ajax({
 			url:"/getprice?color="+color+"&material="+material+"&finish="+finish+"&x="+size_x+"&y="+size_y+"&z="+size_z+"&sizeunit="+sizeunit+"&projectid="+{{project.id}},
 			success:function(result){
-				if (parseFloat(result)>0){
-					$("#unit_price").html("<h3>$"+result+"</h3>");
+				var obj = jQuery.parseJSON(result);
+				var price_unit = obj["price_unit"];
+				var total_price = obj["total_price"]
+				
+				if (parseFloat(total_price)>0){
+					$("#total_price").html("<h3>$"+total_price+"</h3>");
+				}else{
+					$("#total_price").html("<h3></h3>");
 				}
+				$("#priceunitid_hidden").val(price_unit);
 		    }
 		});
 

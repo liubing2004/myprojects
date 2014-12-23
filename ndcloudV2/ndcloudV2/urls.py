@@ -21,6 +21,7 @@ urlpatterns = patterns('',
     url(r'^projectlist/$',core_views.project_list, name='project_list' ),
     url(r'^aboutus/$',core_views.aboutus, name='aboutus' ),
     url(r'^getprice/', core_views.getprice, name='getprice'),
+    url(r'^shop/cart/$', core_views.shopcart, name='shopcart'),
 
     url(r'^admin/', include(admin.site.urls)),
 )

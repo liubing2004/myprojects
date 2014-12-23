@@ -36,5 +36,14 @@ class PriceUnit(models.Model):
     def __str__(self):
         return self.material+","+self.color+","+self.finish+","+self.unit
     
+class Order(models.Model):
+    user = models.ForeignKey(User)
+    priceUnit = models.ForeignKey(PriceUnit)
+    project = models.ForeignKey(ProjectProfile)
+    sizex = models.FloatField(default=0)
+    sizey = models.FloatField(default=0)
+    sizez = models.FloatField(default=0)    
+    status = models.IntegerField(default=0)
+    
     
     
