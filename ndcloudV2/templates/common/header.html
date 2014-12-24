@@ -48,6 +48,11 @@
           <div id="navbar" class="navbar-collapse collapse">
             <ul class="nav navbar-nav navbar-right">
             {% if user.is_authenticated %}
+            	{% if shoppingCartItemCount > 0 %}
+            	<li class="shoppingcarts"><a href="{% url 'shopcart' %}">
+            		<span class="glyphicon glyphicon-shopping-cart">{{shoppingCartItemCount}}</span></a>
+            	</li>
+            	{% endif %}
             	<li class="dropdown">
                 	<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">{{uf.name}} <span class="caret"></span></a>
 	                <ul class="dropdown-menu" role="menu">
@@ -56,6 +61,7 @@
 	                 <li><a href="/logout">Logout</a></li>
 	               </ul>
               	</li>
+              	
 			{% else %}
 				<li class="login"><a href="/login">Login <span class="sr-only">(current)</span></a></li>
 				<li class="register"><a href="/signup">Register <span class="sr-only">(current)</span></a></li>

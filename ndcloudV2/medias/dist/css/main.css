@@ -14,6 +14,12 @@ body {
   margin-bottom: 20px;
 }
 
+.shoppingcarts .glyphicon-shopping-cart{
+	font-size:15px; 
+	color:green;
+}
+
+
 
 .form-signin {
   max-width: 330px;

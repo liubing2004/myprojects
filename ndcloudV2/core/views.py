@@ -86,7 +86,7 @@ def register(request):
 @login_required(login_url='/login')
 def myprofile(request):
     profile = UserProfile.objects.get(user=request.user)
-    return render_internal(request,'myaccount/myprofile.html',{"userprofile":profile})
+    return render_internal(request,'myaccount/myprofile.html',{})
 
 
 @login_required(login_url='/login')
@@ -339,7 +339,7 @@ def shopcart(request):
         
 
     shopCartItems = ShopCartItem.objects.filter(user = request.user)
-    return render_internal(request,'payment/shopcart.html',{"userprofile":profile, "shopCartItems":shopCartItems})
+    return render_internal(request,'payment/shopcart.html',{"shopCartItems":shopCartItems})
     
 
 # @transaction.atomic 
@@ -373,8 +373,8 @@ def shipping(request):
     profile = UserProfile.objects.get(user=request.user)
     shippingAddress = getShippingAddress(request.user)
     if request.method == "GET":
-        return render_internal(request, 'payment/shipping.html', {"userprofile":profile, 
-                                                                  "shipping_address":shippingAddress})
+        return render_internal(request, 'payment/shipping.html', 
+                               { "shipping_address":shippingAddress})
     else:        
         name = request.POST.get("shipusername")
         country = request.POST.get("country")
@@ -411,7 +411,7 @@ def shopreview(request):
     total_price = subtotal_price + shipping_cost
         
     return render_internal(request, 'payment/order_review.html', 
-                           {"userprofile":profile, "shipping_address":shippingAddress,
+                           {"shipping_address":shippingAddress,
                             "shopCartItems":shopCartItems, 
                             "shipping_cost":shipping_cost,
                             "total_price":total_price,
@@ -421,18 +421,21 @@ def shopreview(request):
 @login_required(login_url='/login')
 def payment_confirm(request):
     profile = UserProfile.objects.get(user=request.user)
-    return render_internal(request, 'payment/payment_confirm.html',
-                          {"userprofile":profile})  
+    return render_internal(request, 'payment/payment_confirm.html',{})  
 
 """
 internal render function
 """    
 def render_internal(request, url, dirs):
-    print dirs
     new_dirs = dirs
     if request.user.id != None:
         uf = UserProfile.objects.get(user=request.user)
+        shoppingCartItems = ShopCartItem.objects.filter(user=request.user)
+        shoppingCartItemCount = 0
+        if shoppingCartItems != None:
+            shoppingCartItemCount = len(shoppingCartItems)
         new_dirs["uf"] = uf
+        new_dirs["shoppingCartItemCount"] = shoppingCartItemCount
     return render(request, url, new_dirs)
 
 def getShippingAddress(user):
