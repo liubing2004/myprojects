@@ -5,3 +5,6 @@ from core.models import *
 admin.site.register(UserProfile)
 admin.site.register(ProjectProfile)
 admin.site.register(PriceUnit)
+admin.site.register(ShopCartItem)
+admin.site.register(ShippingAddress)
+admin.site.register(Order)

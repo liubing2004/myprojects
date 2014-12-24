@@ -1,100 +1,144 @@
 {% include "common/header.html" %}
 
+<title>Shop Cart</title>
 
-<div class="container">
     <div class="row">
-        <div class="col-sm-12 col-md-10 col-md-offset-1">
-            <table class="table table-hover">
+        <div class="col-sm-12 col-md-10 col-md-offset-1" >
+            <table class="table table-hover" id="shopcarttable">
                 <thead>
                     <tr>
                         <th>Product</th>
                         <th>Quantity</th>
+                        <th></th>
                         <th class="text-center">Price</th>
-                        <th class="text-center">Total</th>
                         <th> </th>
                     </tr>
                 </thead>
                 <tbody>
+                {% for cartItem in shopCartItems %}
                     <tr>
                         <td class="col-sm-8 col-md-6">
                         <div class="media">
-                            <a class="thumbnail pull-left" href="#"> <img class="media-object" src="http://icons.iconarchive.com/icons/custom-icon-design/flatastic-2/72/product-icon.png" style="width: 72px; height: 72px;"> </a>
+                            <a class="thumbnail pull-left" href="#" id="shopcart_thumbnail" style="margin-right:10px"> <img class="media-object" 
+                            	src="/medias/upload/{{cartItem.project.id}}/{{cartItem.project.profile_image}}" 
+                            	style="width: 72px; height: 72px;"> </a>
                             <div class="media-body">
-                                <h4 class="media-heading"><a href="#">Product name</a></h4>
-                                <h5 class="media-heading"> by <a href="#">Brand name</a></h5>
-                                <span>Status: </span><span class="text-success"><strong>In Stock</strong></span>
+                                <h4 class="media-heading"><a href="#">{{cartItem.project.name}}</a></h4>
+                                 <h5 class="media-heading">{{cartItem.priceUnit.material}}</h5>
+                                 <h5 class="media-heading">{{cartItem.sizex}}{{cartItem.priceUnit.unit}} x {{cartItem.sizey}}{{cartItem.priceUnit.unit}} x {{cartItem.sizez}}{{cartItem.priceUnit.unit}}</h5>
+                                <span>Status: </span><span class="text-success"><strong>Shipping in 5 days</strong></span>
                             </div>
                         </div></td>
                         <td class="col-sm-1 col-md-1" style="text-align: center">
-                        <input type="email" class="form-control" id="exampleInputEmail1" value="3">
+                        <input name="quantity" type="text" class="form-control" id="quantity" value="{{cartItem.quantity}}" 
+                        		shopcartid="{{cartItem.id}}" price="{{cartItem.getPrice}}" onchange="updateTotalPrice({{cartItem.id}})">
                         </td>
-                        <td class="col-sm-1 col-md-1 text-center"><strong>$4.87</strong></td>
-                        <td class="col-sm-1 col-md-1 text-center"><strong>$14.61</strong></td>
+                        <td></td>
+                        <td class="col-sm-1 col-md-1 text-center"><strong>${{cartItem.getPrice}}</strong></td>
                         <td class="col-sm-1 col-md-1">
-                        <button type="button" class="btn btn-danger">
+                        <button type="button" class="btn btn-danger" shopcartid="{{cartItem.id}}" onclick="removeShopCartItem(this)">
                             <span class="glyphicon glyphicon-remove"></span> Remove
                         </button></td>
                     </tr>
-                    <tr>
-                        <td class="col-md-6">
-                        <div class="media">
-                            <a class="thumbnail pull-left" href="#"> <img class="media-object" src="http://icons.iconarchive.com/icons/custom-icon-design/flatastic-2/72/product-icon.png" style="width: 72px; height: 72px;"> </a>
-                            <div class="media-body">
-                                <h4 class="media-heading"><a href="#">Product name</a></h4>
-                                <h5 class="media-heading"> by <a href="#">Brand name</a></h5>
-                                <span>Status: </span><span class="text-warning"><strong>Leaves warehouse in 2 - 3 weeks</strong></span>
-                            </div>
-                        </div></td>
-                        <td class="col-md-1" style="text-align: center">
-                        <input type="email" class="form-control" id="exampleInputEmail1" value="2">
-                        </td>
-                        <td class="col-md-1 text-center"><strong>$4.99</strong></td>
-                        <td class="col-md-1 text-center"><strong>$9.98</strong></td>
-                        <td class="col-md-1">
-                        <button type="button" class="btn btn-danger">
-                            <span class="glyphicon glyphicon-remove"></span> Remove
-                        </button></td>
-                    </tr>
-                    <tr>
-                        <td>   </td>
-                        <td>   </td>
-                        <td>   </td>
-                        <td><h5>Subtotal</h5></td>
-                        <td class="text-right"><h5><strong>$24.59</strong></h5></td>
-                    </tr>
-                    <tr>
-                        <td>   </td>
-                        <td>   </td>
-                        <td>   </td>
-                        <td><h5>Estimated shipping</h5></td>
-                        <td class="text-right"><h5><strong>$6.94</strong></h5></td>
-                    </tr>
+                 {% endfor %}        
                     <tr>
                         <td>   </td>
                         <td>   </td>
                         <td>   </td>
                         <td><h3>Total</h3></td>
-                        <td class="text-right"><h3><strong>$31.53</strong></h3></td>
+                        <td class="text-right"><h3><strong><div id="totalprice"></div></strong></h3></td>
                     </tr>
                     <tr>
                         <td>   </td>
                         <td>   </td>
                         <td>   </td>
                         <td>
-                        <button type="button" class="btn btn-default">
+                        <a type="button" class="btn btn-default" href="{% url 'project_list' %}">
                             <span class="glyphicon glyphicon-shopping-cart"></span> Continue Shopping
-                        </button></td>
+                        </a></td>
                         <td>
-                        <button type="button" class="btn btn-success">
+                        <a type="button" class="btn btn-success" href="{% url 'shipping' %}">
                             Checkout <span class="glyphicon glyphicon-play"></span>
-                        </button></td>
+                        </a>
+						</td>
                     </tr>
                 </tbody>
             </table>
         </div>
     </div>
-</div>
+
+<div class="row bs-wizard" style="border-bottom:0;">               
+               <div class="col-xs-3 bs-wizard-step active">
+                  <div class="text-center bs-wizard-stepnum">Step 1</div>
+                  <div class="progress"><div class="progress-bar"></div></div>
+                  <a href="#" class="bs-wizard-dot"></a>
+                  <div class="bs-wizard-info text-center">Shopping Cart</div>
+                </div>
+                
+                <div class="col-xs-3 bs-wizard-step disabled">
+                  <div class="text-center bs-wizard-stepnum">Step 2</div>
+                  <div class="progress"><div class="progress-bar"></div></div>
+                  <a href="#" class="bs-wizard-dot"></a>
+                  <div class="bs-wizard-info text-center">Shipping Address</div>
+                </div>
+                
+                <div class="col-xs-3 bs-wizard-step disabled">
+                  <div class="text-center bs-wizard-stepnum">Step 3</div>
+                  <div class="progress"><div class="progress-bar"></div></div>
+                  <a href="#" class="bs-wizard-dot"></a>
+                  <div class="bs-wizard-info text-center">Review and Payment</div>
+                </div>
+                
+                <div class="col-xs-3 bs-wizard-step disabled">
+                  <div class="text-center bs-wizard-stepnum">Step 4</div>
+                  <div class="progress"><div class="progress-bar"></div></div>
+                  <a href="#" class="bs-wizard-dot"></a>
+                  <div class="bs-wizard-info text-center"> Complete</div>
+                </div>
+ </div>  
 
 
+
+<script>
+jQuery(document).ready(function() {
+	updateTotalPrice(-1);
+	
+});	
+
+function updateTotalPrice(cartId){
+	var total_price = 0;
+	$('#shopcarttable').find("input[name^='quantity']").each(function(index, element){
+		var input = $(this);
+		var quantity = parseInt(input.val());
+		var shopcartId = parseInt(input.attr('shopcartid'));
+		total_price = total_price + quantity*parseFloat(input.attr('price'));
+		console.log(shopcartId+","+cartId);
+		if (shopcartId == parseInt(cartId)){
+			$.ajax({
+				url:"/updateshopcartquantity/"+shopcartId+"/"+quantity,
+				success:function(result){
+			    }
+			});
+		}
+	})
+	total_price = total_price.toFixed(2);
+	$('#totalprice').html("$"+total_price);
+	console.log("total price:"+total_price);
+	 		 	
+}
+	
+function removeShopCartItem(row){
+	console.log(row);
+	shopcartId = parseInt($(row).attr('shopcartid'));
+	$.ajax({
+		url:"/updateshopcartquantity/"+shopcartId+"/0",
+		success:function(result){
+	    }
+	});
+	$(row).closest('tr').remove();
+	updateTotalPrice(0);
+}
+	
+</script>
 
 {% include "common/footer.html" %}

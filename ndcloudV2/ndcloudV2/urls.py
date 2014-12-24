@@ -21,8 +21,12 @@ urlpatterns = patterns('',
     url(r'^projectlist/$',core_views.project_list, name='project_list' ),
     url(r'^aboutus/$',core_views.aboutus, name='aboutus' ),
     url(r'^getprice/', core_views.getprice, name='getprice'),
+    url(r'^updateshopcartquantity/(?P<shopCartId>\d+)/(?P<quantity>\d+)$', core_views.update_shopcart_quantity, name='update_shopcart_quantity'),
     url(r'^shop/cart/$', core_views.shopcart, name='shopcart'),
-
+    url(r'^shop/shipping/$', core_views.shipping, name='shipping'),
+    url(r'^shop/review/$', core_views.shopreview, name='shop_review'),
+    url(r'^shop/paymentconfirm/$', core_views.payment_confirm, name='payment_confirm'),
+    #url(r'^shop/checkout/$', core_views.shopcart_checkout, name='shopcart_checkout'),
     url(r'^admin/', include(admin.site.urls)),
 )
 

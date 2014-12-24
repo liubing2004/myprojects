@@ -1,0 +1,141 @@
+{% include "common/header.html" %}
+
+<title>Shipping</title>
+<div class="row">
+    <div class="col-md-4 col-md-offset-4">
+      <form class="form-horizontal" role="form" action="{% url 'shipping' %}" method="post">
+      {% csrf_token %}
+        <fieldset>
+
+          <!-- Form Name -->
+          <h3>Shipping Address</h3>
+		  <br>	
+		  
+		   <!-- Text input-->
+          <div class="form-group">
+            <label class="col-sm-3 control-label" for="textinput">Name</label>
+            <div class="col-sm-9">
+              <input type="text" name="shipusername" placeholder="Name" 
+              		value="{{shipping_address.shipUserName}}" 
+              		class="form-control" data-validation="length" 
+        			data-validation-length="min4" 
+        			data-validation-error-msg="You did not enter a valid name." required>
+            </div>
+          </div>
+		  
+          <!-- Text input-->
+          <div class="form-group">
+            <label class="col-sm-3 control-label" for="textinput">Line 1</label>
+            <div class="col-sm-9">
+              <input type="text" name="addressline_1" placeholder="Address Line 1" 
+              		value="{{shipping_address.addressline_1}}" 
+              		class="form-control" data-validation="length" 
+        			data-validation-length="min4" 
+        			data-validation-error-msg="You did not enter a valid address line." required>
+            </div>
+          </div>
+
+          <!-- Text input-->
+          <div class="form-group">
+            <label class="col-sm-3 control-label" for="textinput">Line 2</label>
+            <div class="col-sm-9">
+              <input type="text" name="addressline_2" placeholder="Address Line 2" class="form-control" 
+              		value="{{shipping_address.addressline_2}}">
+            </div>
+          </div>
+
+          <!-- Text input-->
+          <div class="form-group">
+            <label class="col-sm-3 control-label" for="textinput">City</label>
+            <div class="col-sm-9">
+              <input type="text" name="city" placeholder="City" value="{{shipping_address.city}}" 
+              		class="form-control" data-validation="length" 
+        			data-validation-length="min2" data-validation-error-msg="City is not valid." required>
+            </div>
+          </div>
+
+          <!-- Text input-->
+          <div class="form-group">
+            <label class="col-sm-3 control-label" for="textinput">State</label>
+            <div class="col-sm-9">
+              <input type="text" name="state" placeholder="State" class="form-control" 
+              		value="{{shipping_address.state}}"	data-validation="length" 
+        			data-validation-length="min2" data-validation-error-msg="State is not valid." required>
+            </div>
+           </div>
+
+		 <div class="form-group">	
+            <label class="col-sm-3 control-label" for="textinput">Postcode</label>
+            <div class="col-sm-9">
+              <input type="text" name="postcode" placeholder="Post Code" class="form-control" 
+              data-validation="length" value="{{shipping_address.postcode}}"
+        			data-validation-length="min2" data-validation-error-msg="Postcode is invalid." required>
+            </div>
+          </div>
+
+
+
+          <!-- Text input-->
+          <div class="form-group">
+            <label class="col-sm-3 control-label" for="textinput">Country</label>
+            <div class="col-sm-9">
+              <input type="text" name="country" placeholder="Country" class="form-control" 
+              		data-validation="length"  value="{{shipping_address.country}}"
+        			data-validation-length="min2" data-validation-error-msg="Country is invalid." required>
+            </div>
+          </div>
+          
+          <!-- Text input-->
+          <div class="form-group">
+            <label class="col-sm-3 control-label" for="textinput">Country</label>
+            <div class="col-sm-9">
+              <input type="text" name="phone" placeholder="Phone" class="form-control" 
+              		value="{{shipping_address.phone}}">
+            </div>
+          </div>
+
+          <div class="form-group">
+            <div class="col-sm-offset-3 col-sm-9">
+              <div class="pull-right">
+                <a type="button" class="btn btn-default" href="{% url 'shopcart' %}">Back</a>
+                <button type="submit" class="btn btn-primary">Save</button>
+              </div>
+            </div>
+          </div>
+
+        </fieldset>
+      </form>
+    </div><!-- /.col-lg-12 -->
+</div><!-- /.row -->
+
+<div class="row bs-wizard" style="border-bottom:0;">               
+               <div class="col-xs-3 bs-wizard-step complete">
+                  <div class="text-center bs-wizard-stepnum">Step 1</div>
+                  <div class="progress"><div class="progress-bar"></div></div>
+                  <a href="{% url 'shopcart' %}" class="bs-wizard-dot"></a>
+                  <div class="bs-wizard-info text-center">Shopping Cart</div>
+                </div>
+                
+                <div class="col-xs-3 bs-wizard-step active">
+                  <div class="text-center bs-wizard-stepnum">Step 2</div>
+                  <div class="progress"><div class="progress-bar"></div></div>
+                  <a href="{% url 'shipping' %}" class="bs-wizard-dot"></a>
+                  <div class="bs-wizard-info text-center">Shipping Address</div>
+                </div>
+                
+                <div class="col-xs-3 bs-wizard-step disabled">
+                  <div class="text-center bs-wizard-stepnum">Step 3</div>
+                  <div class="progress"><div class="progress-bar"></div></div>
+                  <a href="#" class="bs-wizard-dot"></a>
+                  <div class="bs-wizard-info text-center">Review and Payment</div>
+                </div>
+                
+                <div class="col-xs-3 bs-wizard-step disabled">
+                  <div class="text-center bs-wizard-stepnum">Step 4</div>
+                  <div class="progress"><div class="progress-bar"></div></div>
+                  <a href="#" class="bs-wizard-dot"></a>
+                  <div class="bs-wizard-info text-center"> Complete</div>
+                </div>
+ </div>          
+
+{% include "common/footer.html" %}
