@@ -439,7 +439,7 @@ def shopreview(request):
         "business": settings.PAYPAL_RECEIVER_EMAIL,
         "amount": total_price,
         "item_name": "test item",
-        "invoice": "invoice-"+invoice,
+        "invoice": invoice,
         "notify_url": notify_url,
         "return_url": return_url,
         "return": return_url,

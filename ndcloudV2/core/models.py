@@ -55,10 +55,11 @@ class ShippingAddress(models.Model):
 class Order(models.Model):
    user = models.ForeignKey(User)
    shippingAddress =  models.ForeignKey(ShippingAddress)
-   invoice = models.CharField(max_length=200, default="")
+   invoice = models.CharField(max_length=200, default="", unique=True)
    gross = models.FloatField(default=0.0)
    paymentFee = models.FloatField(default=0)
    status = models.IntegerField(default=0)
+   providerResponse = models.TextField(default="")
     
 class ShopCartItem(models.Model):
     user = models.ForeignKey(User)
@@ -88,9 +89,14 @@ def show_me_the_money(sender, **kwargs):
     # You need to check 'payment_status' of the IPN
 
     if ipn_obj.payment_status == "Completed":
-        # Undertake some action depending upon `ipn_obj`.
-        if ipn_obj.custom == "Upgrade all users!":
-            Users.objects.update(paid=True)
+        invoice = ipn_obj.invoice
+        order = Order.objects.filter(invoice=invoice)[0]
+        order.gross = float(ipn_obj.mc_gross)
+        order.paymentFee = float(ipn_obj.mc_fee)
+        order.providerResponse = str(IPN_POST_PARAMS)
+        order.status = 1
+        order.save()
+        
     else:
         pass
 payment_was_successful.connect(show_me_the_money)
