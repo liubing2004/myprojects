@@ -2,7 +2,6 @@ from django.db import models
 from django.contrib.auth.models import User
 from paypal.standard.ipn.signals import payment_was_successful
 from paypal.standard.ipn.tests.test_ipn import IPN_POST_PARAMS
-from stripe.resource import Invoice
 
 class UserProfile(models.Model):
     # This field is required.
