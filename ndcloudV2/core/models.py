@@ -59,7 +59,6 @@ class Order(models.Model):
    gross = models.FloatField(default=0.0)
    paymentFee = models.FloatField(default=0)
    status = models.IntegerField(default=0)
-   providerResponse = models.TextField(default="")
     
 class ShopCartItem(models.Model):
     user = models.ForeignKey(User)
@@ -93,7 +92,6 @@ def show_me_the_money(sender, **kwargs):
         order = Order.objects.filter(invoice=invoice)[0]
         order.gross = float(ipn_obj.mc_gross)
         order.paymentFee = float(ipn_obj.mc_fee)
-        order.providerResponse = str(IPN_POST_PARAMS)
         order.status = 1
         order.save()
         
