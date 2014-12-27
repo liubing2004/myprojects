@@ -56,21 +56,6 @@ WSGI_APPLICATION = 'djangotest.wsgi.application'
 
 PAYPAL_RECEIVER_EMAIL = 'seller@ivylla.com'
 
-# MERCHANT_SETTINGS = {
-#      'pay_pal': {
-#          "WPP_USER" : 'bliu_seller3_api1.ivylla.com',
-#          "WPP_PASSWORD" : '1369000971',
-#          "WPP_SIGNATURE" : 'AWnAx8Anmq2jlFdKU0jMVAyAL6qKA4FAKkzx4L-i8TWTIUsPMzsM2MLM',
-#          "RECEIVER_EMAIL" : 'bliu_seller3@ivylla.com',
-#          # Below attribute is optional
-#          "ENCRYPTED": True
-#      }
-# }
-# 
-# PAYPAL_RECEIVER_EMAIL = MERCHANT_SETTINGS['pay_pal']['RECEIVER_EMAIL']
-
-
-
 # Database
 # https://docs.djangoproject.com/en/1.7/ref/settings/#databases
 

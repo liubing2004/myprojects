@@ -11,8 +11,11 @@ from django.contrib.auth.models import User
 from core.models import *
 import os, zipfile
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
-import utils
-from matplotlib.font_manager import path
+import utils, time, hashlib
+#from matplotlib.font_manager import path
+from paypal.standard.forms import PayPalPaymentsForm
+from paypal.standard.conf import POSTBACK_ENDPOINT, SANDBOX_POSTBACK_ENDPOINT
+from django.core.urlresolvers import reverse
 
 # Create your views here.
 def index(request):
@@ -409,19 +412,63 @@ def shopreview(request):
     for item in shopCartItems:
         subtotal_price = subtotal_price + item.getTotalPrice
     total_price = subtotal_price + shipping_cost
+    
+    #invoice = str(int(round(time.time() * 1000)))
+    invoice = getInvoice(request.user, shopCartItems)
+    order = Order.objects.filter(invoice=invoice)
+    if order == None or len(order) == 0:
+        order = Order()
+    else:
+        order = order[0]
         
+    order.user = request.user
+    order.shippingAddress = shippingAddress
+    order.gross = total_price
+    order.invoice = invoice
+    order.save()
+    
+    for item in shopCartItems:
+        item.order = order
+        item.save()
+    
+    notify_url = settings.SITE_NAME+ reverse('paypal-ipn')
+    return_url = settings.SITE_NAME+"payment/return/"+"?invoice="+invoice
+    cancel_url = settings.SITE_NAME+"payment/cancel/"
+    action = SANDBOX_POSTBACK_ENDPOINT
+    paypal_dict = {
+        "business": settings.PAYPAL_RECEIVER_EMAIL,
+        "amount": total_price,
+        "item_name": "test item",
+        "invoice": "invoice-"+invoice,
+        "notify_url": notify_url,
+        "return_url": return_url,
+        "return": return_url,
+        "cancel_return": cancel_url,
+        "custom":"user=%d&order=%d" %(request.user.id, order.id),
+
+    }
+
+    # Create the instance.
+    form = PayPalPaymentsForm(initial=paypal_dict)        
     return render_internal(request, 'payment/order_review.html', 
                            {"shipping_address":shippingAddress,
                             "shopCartItems":shopCartItems, 
                             "shipping_cost":shipping_cost,
                             "total_price":total_price,
-                            "subtotal_price":subtotal_price})    
+                            "subtotal_price":subtotal_price,
+                            "form":form,
+                            "action":action})    
 
 
 @login_required(login_url='/login')
 def payment_confirm(request):
-    profile = UserProfile.objects.get(user=request.user)
-    return render_internal(request, 'payment/payment_confirm.html',{})  
+    return render_internal(request, 'payment/payment_confirm.html',{}) 
+
+def payment_return(request):
+    return render_internal(request, 'payment/payment_confirm.html',{}) 
+
+def payment_cancel(request):
+    return render_internal(request, 'payment/payment_confirm.html',{})
 
 """
 internal render function
@@ -445,6 +492,17 @@ def getShippingAddress(user):
     else:
         shippingAddress = shippingAddress[0]  
     return shippingAddress  
+
+def getInvoice(user, shoppingCarts=list()):    
+    s = "user="+str(user.id)
+    s += "&shoppingcarts="
+    for item in shoppingCarts:
+        s += str(item.id) + ","
+
+    m = hashlib.md5()
+    m.update(s)
+    return m.hexdigest()
+    
 
 
     

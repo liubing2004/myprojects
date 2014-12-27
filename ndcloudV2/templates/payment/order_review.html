@@ -71,8 +71,9 @@
                     </tbody>
                 </table>
                 <div class="pull-right">
-                 <form role="form" action="{% url 'payment_confirm' %}" method="post">
+                 <form role="form" action="{{action}}" method="post" class="has-validation-callback">
                  {% csrf_token %}
+                 {{ form }}
                 	<a type="button" class="btn btn-default" href="{% url 'shipping' %}">Back</a>     			
                 	<button type="submit" class="btn btn-success">Pay Now</button>
                 </form>

@@ -28,6 +28,9 @@ ALLOWED_HOSTS = []
 
 AUTHENTICATION_BACKENDS = ( 'django.contrib.auth.backends.ModelBackend',)
 
+SITE_NAME = 'http://127.0.0.1:8000/'
+PAYPAL_URL = "https://www.sandbox.paypal.com/cgi-bin/webscr"
+
 
 # Application definition
 
@@ -40,6 +43,7 @@ INSTALLED_APPS = (
     'django.contrib.staticfiles',
     'jsonify',
     'core',
+    'paypal.standard.ipn',
 )
 
 MIDDLEWARE_CLASSES = (
@@ -116,3 +120,4 @@ TEMPLATE_DIRS = (
     os.path.abspath(os.path.join(BASE_DIR,"templates")),
 )
 
+PAYPAL_RECEIVER_EMAIL = 'seller@ivylla.com'

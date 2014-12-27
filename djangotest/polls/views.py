@@ -62,13 +62,14 @@ def view_that_asks_for_money(request):
         "business": settings.PAYPAL_RECEIVER_EMAIL,
         "amount": "10.00",
         "item_name": "test item",
-        "invoice": "unique-"+invoice,
+        "invoice": "invoice-"+invoice,
         #"notify_url": "http://127.0.0.1" + reverse('paypal-ipn'),
         "notify_url": "http://127.0.0.1/polls/paypal/",
         "return_url": "http://127.0.0.1/polls/payment_return/",
         "return": "http://127.0.0.1/polls/payment_return?invoice="+invoice,
         "cancel_return": "http://127.0.0.1/polls/payment_cancel/",
-        "rm":2,
+        #"rm":2,
+        "custom":"invoice="+invoice,
 
     }
 

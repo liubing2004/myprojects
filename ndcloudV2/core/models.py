@@ -1,5 +1,8 @@
 from django.db import models
 from django.contrib.auth.models import User
+from paypal.standard.ipn.signals import payment_was_successful
+from paypal.standard.ipn.tests.test_ipn import IPN_POST_PARAMS
+from stripe.resource import Invoice
 
 class UserProfile(models.Model):
     # This field is required.
@@ -35,25 +38,6 @@ class PriceUnit(models.Model):
     
     def __str__(self):
         return self.material+","+self.color+","+self.finish+","+self.unit
-    
-class ShopCartItem(models.Model):
-    user = models.ForeignKey(User)
-    priceUnit = models.ForeignKey(PriceUnit)
-    project = models.ForeignKey(ProjectProfile)
-    sizex = models.FloatField(default=0)
-    sizey = models.FloatField(default=0)
-    sizez = models.FloatField(default=0)    
-    quantity = models.IntegerField(default=0)
-    status = models.IntegerField(default=0)
-    
-    @property
-    def getPrice(self):
-        return round(self.priceUnit.price * self.sizex * self.sizey * self.sizez , 2)
-    
-    @property
-    def getTotalPrice(self):
-        return round(self.priceUnit.price * self.sizex * self.sizey * self.sizez * self.quantity , 2)
-    
 
 class ShippingAddress(models.Model):
     user = models.ForeignKey(User)
@@ -69,11 +53,45 @@ class ShippingAddress(models.Model):
     def isEmpty(self):
         return self.user == None
     
-    
 class Order(models.Model):
    user = models.ForeignKey(User)
    shippingAddress =  models.ForeignKey(ShippingAddress)
+   invoice = models.CharField(max_length=200, default="")
+   gross = models.FloatField(default=0.0)
+   paymentFee = models.FloatField(default=0)
    status = models.IntegerField(default=0)
     
+class ShopCartItem(models.Model):
+    user = models.ForeignKey(User)
+    priceUnit = models.ForeignKey(PriceUnit)
+    project = models.ForeignKey(ProjectProfile)
+    sizex = models.FloatField(default=0)
+    sizey = models.FloatField(default=0)
+    sizez = models.FloatField(default=0)    
+    quantity = models.IntegerField(default=0)
+    order = models.ForeignKey(Order, default=0)
+    
+    @property
+    def getPrice(self):
+        return round(self.priceUnit.price * self.sizex * self.sizey * self.sizez , 2)
+    
+    @property
+    def getTotalPrice(self):
+        return round(self.priceUnit.price * self.sizex * self.sizey * self.sizez * self.quantity , 2)
     
     
+
+
+def show_me_the_money(sender, **kwargs):
+    ipn_obj = sender
+    print "ipn_obj", IPN_POST_PARAMS,ipn_obj.payment_status,\
+        ipn_obj.custom,ipn_obj.invoice, ipn_obj.mc_gross, ipn_obj.mc_fee
+    # You need to check 'payment_status' of the IPN
+
+    if ipn_obj.payment_status == "Completed":
+        # Undertake some action depending upon `ipn_obj`.
+        if ipn_obj.custom == "Upgrade all users!":
+            Users.objects.update(paid=True)
+    else:
+        pass
+payment_was_successful.connect(show_me_the_money)

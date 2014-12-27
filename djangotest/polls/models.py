@@ -26,7 +26,7 @@ from paypal.standard.ipn.signals import payment_was_successful
 
 def show_me_the_money(sender, **kwargs):
     ipn_obj = sender
-    print "ipn_obj", ipn_obj
+    print "ipn_obj", ipn_obj,ipn_obj.payment_status
     # You need to check 'payment_status' of the IPN
 
     if ipn_obj.payment_status == "Completed":
