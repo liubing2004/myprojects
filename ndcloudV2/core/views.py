@@ -111,8 +111,11 @@ def upload_project(request):
     print is3dmodel, project_name, project_file, project_image
     
     user = request.user
-    unzipped = zipfile.ZipFile(project_file)
-    if (not is3dmodel):        
+   
+    if (not is3dmodel): 
+        if not project_file.name.endswith("zip"):
+              raise Http404  
+        unzipped = zipfile.ZipFile(project_file)   
         for img_name in unzipped.namelist():
             if not utils.isValidImageName(img_name):
                 return render_internal(request,'myaccount/upload.html',{})
@@ -121,15 +124,20 @@ def upload_project(request):
         project_profile.save()
         
     else:
-        for f in unzipped.namelist():
-            if f.endswith("obj"):
-                threemodel = f.split("/")[-1]
-            elif f.endswith("mtl"):
-                texture = f.split("/")[-1]
+        if project_file.name.endswith("zip"):
+            unzipped = zipfile.ZipFile(project_file)
+            for f in unzipped.namelist():
+                if f.endswith("obj"):
+                    threedmodel = f.split("/")[-1]
+                elif f.endswith("mtl"):
+                    texture = f.split("/")[-1]
+        else:
+            threedmodel = project_file.name
+            texture = ""
         status = utils.ProjectStatus.success
         project_profile = ProjectProfile(user=user, name=project_name, status=status, 
                                          profile_image=project_image.name, 
-                                         threedmodel = threemodel,
+                                         threedmodel = threedmodel,
                                          texture = texture)
         project_profile.save()
 
@@ -151,16 +159,25 @@ def upload_project(request):
         outpath = original_pic_directory
     
     print path
-    dest = open(path, 'w')
-    if project_file.multiple_chunks:
-        for c in project_file.chunks():
+    if project_file.name.endswith("zip"):
+        dest = open(path, 'w')
+        if project_file.multiple_chunks:
+            for c in project_file.chunks():
                 dest.write(c)
-    else:
-        dest.write(project_file.read())
-    dest.close()
+        else:
+            dest.write(project_file.read())
+        dest.close()
     
-    utils.extractZipfile(path, outpath)
-    os.remove(path)
+        utils.extractZipfile(path, outpath)
+        os.remove(path)
+    else:
+        dest = open(outpath+ project_file.name, 'w')
+        if project_file.multiple_chunks:
+            for c in project_file.chunks():
+                dest.write(c)
+        else:
+            dest.write(project_file.read())
+        dest.close() 
     
     profile_image_path = settings.BASE_DIR+"/medias/upload/%d/%s" %(project_profile.id, project_profile.profile_image);
     dest = open(profile_image_path, 'w')

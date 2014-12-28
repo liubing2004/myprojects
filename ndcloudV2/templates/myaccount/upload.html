@@ -11,16 +11,17 @@
 				<div class="form-group col-lg-8">
 						<label for="project_name" >Project Name</label>
 						<input type="text" name="project_name" class="form-control" id="project_name" value="" data-validation="length" 
-        					data-validation-length="min4" data-validation-error-msg="You did not enter a valid project name" required>
+        					data-validation-length="min4" data-validation-error-msg="You need to enter a valid project name" required>
         				
 				</div>
 				
 				<div class="form-group col-lg-8">
 					<label for="filename" >File</label>
-					<input type="file" class="filestyle" name="project" data-buttonName="btn-primary" data-validation="mime size required" 
-						data-validation-allowing="zip" 
-					    data-validation-max-size="25M"
-						data-validation-error-msg="You need to upload a zip file." required>
+					<input type="file" class="filestyle" name="project" data-buttonName="btn-primary" 
+						data-validation="required extension" 
+						data-validation-allowing="zip, obj" 
+					    data-validation-max-size="15M"
+						data-validation-error-msg="You need to upload a zip or obj file." required>
 				</div>
 				
 				
@@ -29,7 +30,7 @@
 					<input type="file" class="filestyle" name="project_image" data-buttonName="btn-primary"
 							 data-validation="mime size required" 
 							 data-validation-allowing="jpg, jpeg, png, bmp" 
-		 					 data-validation-max-size="2M"
+		 					 data-validation-max-size="3M"
 							 data-validation-error-msg="You need to upload a picture." required>
 				</div>
 				
