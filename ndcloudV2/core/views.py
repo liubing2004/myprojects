@@ -9,9 +9,9 @@ from django.http import HttpResponse, Http404
 from django.conf import settings
 from django.contrib.auth.models import User
 from core.models import *
-import os, zipfile
+import os, zipfile, time, hashlib
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
-import utils, time, hashlib
+import utils
 #from matplotlib.font_manager import path
 from paypal.standard.forms import PayPalPaymentsForm
 from paypal.standard.conf import POSTBACK_ENDPOINT, SANDBOX_POSTBACK_ENDPOINT
@@ -509,7 +509,7 @@ def getShippingAddress(user):
     return shippingAddress  
 
 def getInvoice(user, shoppingCarts=list()):    
-    s = "user="+str(user.id)
+    s = "user="+str(user.id)+"&ts="+str(time.time())
     s += "&shoppingcarts="
     for item in shoppingCarts:
         s += str(item.id) + ","
