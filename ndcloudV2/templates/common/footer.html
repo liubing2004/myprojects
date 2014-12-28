@@ -15,6 +15,19 @@
 
     
     <script>
+ 	// Add validation
+    $.formUtils.addValidator({
+      name : 'custom_modelext',
+      validatorFunction : function(value, $el, config, language, $form) {
+    	  var extension = value.replace(/^.*\./, '');
+    	  console.log("extension:"+extension);
+          return extension == "obj";
+      },
+      errorMessage : 'You have to give an even number',
+      errorMessageKey: 'badEvenNumber'
+    });
+    
+    
   	  $.validate({
 	    modules : 'security,file',
 	    validateOnBlur : true,

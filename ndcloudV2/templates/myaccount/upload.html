@@ -1,6 +1,6 @@
 {% include "common/header.html" %}
 
-<form class="upload_project_form" role="form" action="{% url 'upload_project' %}" method="post"  enctype="multipart/form-data">
+<form class="upload_project_form" id="upload_project_form" role="form" action="{% url 'upload_project' %}" method="post"  enctype="multipart/form-data">
 {% csrf_token %}
 <div class="container-fluid">
     <section class="container">
@@ -17,9 +17,8 @@
 				
 				<div class="form-group col-lg-8">
 					<label for="filename" >File</label>
-					<input type="file" class="filestyle" name="project" data-buttonName="btn-primary" 
-						data-validation="required extension" 
-						data-validation-allowing="zip, obj" 
+					<input type="file" class="filestyle" id="project_input" name="project" data-buttonName="btn-primary" 
+						data-validation="custom_modelext size required" 
 					    data-validation-max-size="15M"
 						data-validation-error-msg="You need to upload a zip or obj file." required>
 				</div>
@@ -67,7 +66,6 @@ When you upload the 3D model to the site, you need to select the .zip file on yo
 	</section>
 </div>
 </form>
-
 	
 
 {% include "common/footer.html" %}
