@@ -1,5 +1,104 @@
 {% include "common/header.html" %}
+<div class="row">
+        <div class="col-md-2">
+            <ul class="nav nav-pills nav-stacked admin-menu">
+                <li class="active"><a href="#" data-target-id="home"><i class="fa fa-home fa-fw"></i>Home</a></li>
+                <li><a href="http://www.jquery2dotnet.com" data-target-id="widgets"><i class="fa fa-list-alt fa-fw"></i>My Projects</a></li>
+                <li><a href="http://www.jquery2dotnet.com" data-target-id="pages"><i class="fa fa-file-o fa-fw"></i>My Orders</a></li>
+            </ul>
+        </div>
+        <div class="col-md-10 well admin-content" id="home">
+            <p>
+                Hello! This is a forked snippet.<br>
+                It is for users, which use one-page layouts.
+            </p>
+            <p>
+                Here's the original one from BhaumikPatel: <a href="http://bootsnipp.com/snippets/featured/vertical-admin-menu" target="_BLANK">Vertical Admin Menu</a>
+                <br><br>
+                <strong>Thank you Bhaumik!</strong>
+            </p>
+        </div>
+        <div class="col-md-10 well admin-content" id="widgets">
+            {% for project in projects %}
+        	{% if forloop.counter0|divisibleby:3  %}
+         	<div class="row">
+        	{% endif %}
+          	 <div class="col-md-4 portfolio-item">
+                <a href="/projectdetail/{{project.id}}">
+                    <img class="img-responsive" src="/medias/upload/{{project.id}}/{{project.profile_image}}" alt="">
+                </a>
+                <h3>
+                    <a href="/projectdetail/{{project.id}}">{{project.name}}</a>
+                </h3>
+            </div>
+         	{% if forloop.counter|divisibleby:3 or forloop.counter == projects_size %}    
+         	</div>
+         	{% endif %}
+         	{% endfor %}
+        </div>
+        <div class="col-md-10 well admin-content" id="pages">
+              <div class="row">
+		        <div class="col-sm-12 col-md-10 col-md-offset-1" >
+		            <table class="table table-hover" id="shopcarttable">
+		                <thead>
+		                    <tr>
+		                        <th>Product</th>
+		                        <th>Quantity</th>
+		                        <th></th>
+		                        <th class="text-center">Price</th>
+		                        <th> </th>
+		                    </tr>
+		                </thead>
+		                <tbody>
+		                {% for cartItem in orderedItems %}
+		                    <tr>
+		                        <td class="col-sm-8 col-md-5">
+		                        <div class="media">
+		                            <a class="thumbnail pull-left" href="#" id="shopcart_thumbnail" style="margin-right:10px"> <img class="media-object" 
+		                            	src="/medias/upload/{{cartItem.project.id}}/{{cartItem.project.profile_image}}" 
+		                            	style="width: 72px; height: 72px;"> </a>
+		                            <div class="media-body">
+		                                <h4 class="media-heading"><a href="#">{{cartItem.project.name}}</a></h4>
+		                                 <h5 class="media-heading">{{cartItem.priceUnit.material}}</h5>
+		                                 <h5 class="media-heading">{{cartItem.sizex}}{{cartItem.priceUnit.unit}} x {{cartItem.sizey}}{{cartItem.priceUnit.unit}} x {{cartItem.sizez}}{{cartItem.priceUnit.unit}}</h5>
+		                                <span>Status: </span><span class="text-success"><strong>Shipping in 5 days</strong></span>
+		                            </div>
+		                        </div></td>
+		                        <td class="col-sm-1 col-md-1" style="text-align: center"><strong>{{cartItem.quantity}}</strong></td>
+		                        <td></td>
+		                        <td class="col-sm-1 col-md-1 text-center"><strong>${{cartItem.getPrice}}</strong></td>
+		                        <td class="col-sm-1 col-md-2 pull-right">
+		                        	<a type="button" class="btn btn-success" href="{% url 'project_list' %}">Order</a>
+                        		</td>
+		                    </tr>
+		                 {% endfor %}        
+		                </tbody>
+		            </table>
+		        </div>
+    		</div>
+        </div>
+    </div>
 
-Name: {{userprofile.name}}
+<script>    
+ $(document).ready(function()
+{
+    var navItems = $('.admin-menu li > a');
+    var navListItems = $('.admin-menu li');
+    var allWells = $('.admin-content');
+    var allWellsExceptFirst = $('.admin-content:not(:first)');
+    
+    allWellsExceptFirst.hide();
+    navItems.click(function(e)
+    {
+        e.preventDefault();
+        navListItems.removeClass('active');
+        $(this).closest('li').addClass('active');
+        
+        allWells.hide();
+        var target = $(this).attr('data-target-id');
+        $('#' + target).show();
+    });
+});
+ </script>
 
 {% include "common/footer.html" %}

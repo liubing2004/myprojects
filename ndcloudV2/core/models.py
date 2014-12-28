@@ -71,7 +71,7 @@ class ShopCartItem(models.Model):
     sizey = models.FloatField(default=0)
     sizez = models.FloatField(default=0)    
     quantity = models.IntegerField(default=0)
-    order = models.ForeignKey(Order, null=True)
+    order = models.ForeignKey(Order, blank=True, null=True, on_delete=models.SET_NULL)
     
     @property
     def getPrice(self):

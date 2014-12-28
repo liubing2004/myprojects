@@ -87,9 +87,12 @@ def register(request):
     
 
 @login_required(login_url='/login')
-def myprofile(request):
-    profile = UserProfile.objects.get(user=request.user)
-    return render_internal(request,'myaccount/myprofile.html',{})
+def myprofile(request):    
+    projects = list(ProjectProfile.objects.filter(status = utils.ProjectStatus.success, user=request.user))
+    orderedItems = getOrderedItems(request.user)
+    return render_internal(request,'myaccount/myprofile.html',
+                           {"projects":projects,
+                            "orderedItems":orderedItems})
 
 
 @login_required(login_url='/login')
@@ -447,15 +450,23 @@ def shopreview(request):
                             "total_price":total_price,
                             "subtotal_price":subtotal_price,
                             "form":form,
-                            "action":action})    
+                            "action":action,
+                            "order":order})    
 
 
-@login_required(login_url='/login')
-def payment_confirm(request):
-    return render_internal(request, 'payment/payment_confirm.html',{}) 
 
 def payment_return(request):
-    return render_internal(request, 'payment/payment_confirm.html',{}) 
+    print request
+    invoice = request.GET.get("invoice", "")
+    status = request.GET.get("st", "")
+    order = Order.objects.filter(invoice=invoice)
+    if order==None or order!=None and len(order)==0:
+        raise Http404
+    order = order[0]
+    if status ==  "Completed":
+        order.status = utils.OrderStatus.success
+        order.save()
+    return render_internal(request, 'payment/payment_confirm.html',{"invoice":invoice}) 
 
 def payment_cancel(request):
     return render_internal(request, 'payment/payment_confirm.html',{})
@@ -493,17 +504,17 @@ def getInvoice(user, shoppingCarts=list()):
 def getShopCartItems(user):
     completeOrders = Order.objects.filter(status=utils.OrderStatus.success)
     shopCartItems = ShopCartItem.objects.exclude(order__in=completeOrders).filter(user = user)
-    print "shop cart items:", shopCartItems
-    realShopCartItems = list()
     if shopCartItems==None:
-        return realShopCartItems
-    for item in shopCartItems:
-        print item
-        if item.order != None and item.order.status>0:
-            continue
-        realShopCartItems.append(item)
-    return realShopCartItems
-    
+        return list()
+    return shopCartItems
+
+def getOrderedItems(user):
+    completeOrders = Order.objects.filter(status=utils.OrderStatus.success)
+    shopCartItems = ShopCartItem.objects.filter(order__in=completeOrders, user = user)
+    if shopCartItems==None:
+        return list()
+    return shopCartItems
+
 
 
     

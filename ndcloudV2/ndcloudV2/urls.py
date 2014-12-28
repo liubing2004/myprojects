@@ -25,7 +25,7 @@ urlpatterns = patterns('',
     url(r'^shop/cart/$', core_views.shopcart, name='shopcart'),
     url(r'^shop/shipping/$', core_views.shipping, name='shipping'),
     url(r'^shop/review/$', core_views.shopreview, name='shop_review'),
-    url(r'^shop/paymentconfirm/$', core_views.payment_confirm, name='payment_confirm'),
+    #url(r'^shop/paymentconfirm/$', core_views.payment_confirm, name='payment_confirm'),
     
     url(r'^payment/return/', core_views.payment_return, name='payment_return'),
     url(r'^payment/cancel/', core_views.payment_cancel, name='payment_cancel'),
