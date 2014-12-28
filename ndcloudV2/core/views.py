@@ -344,31 +344,7 @@ def shopcart(request):
     shopCartItems = ShopCartItem.objects.filter(user = request.user)
     return render_internal(request,'payment/shopcart.html',{"shopCartItems":shopCartItems})
     
-
-# @transaction.atomic 
-# def shopcart_checkout(request):
-#     print request
-#     profile = UserProfile.objects.get(user=request.user)
-#     if request.method == "GET":
-#         raise Http404
-#     order = Order.objects.filter(user=request.user)
-#     if order == None or len(order) == 0:
-#         order = Order(user = request.user)
-#         order.save()
-#     else:
-#         order = order[0]
-#     
-#     shopCartItems = ShopCartItem.objects.filter(user = request.user)
-#     for item in shopCartItems:
-#         item.order = order
-#         item.save()
-#     
-#     shippingAddress = getShippingAddress(request.user)
-#     return render_internal(request, 'payment/shipping.html', {"userprofile":profile,
-#                                                               "shipping_address":shippingAddress})
-        
-    
-    
+ 
 
 @login_required(login_url='/login')
 @transaction.atomic        
@@ -413,7 +389,6 @@ def shopreview(request):
         subtotal_price = subtotal_price + item.getTotalPrice
     total_price = subtotal_price + shipping_cost
     
-    #invoice = str(int(round(time.time() * 1000)))
     invoice = getInvoice(request.user, shopCartItems)
     order = Order.objects.filter(invoice=invoice)
     if order == None or len(order) == 0:
@@ -431,7 +406,7 @@ def shopreview(request):
         item.order = order
         item.save()
     
-    notify_url = settings.SITE_NAME+ reverse('paypal-ipn')
+    notify_url = settings.SITE_NAME+ "payment/paypal/"
     return_url = settings.SITE_NAME+"payment/return/"+"?invoice="+invoice
     cancel_url = settings.SITE_NAME+"payment/cancel/"
     action = SANDBOX_POSTBACK_ENDPOINT
@@ -471,7 +446,7 @@ def payment_cancel(request):
     return render_internal(request, 'payment/payment_confirm.html',{})
 
 """
-internal render function
+internal function
 """    
 def render_internal(request, url, dirs):
     new_dirs = dirs
@@ -480,7 +455,9 @@ def render_internal(request, url, dirs):
         shoppingCartItems = ShopCartItem.objects.filter(user=request.user)
         shoppingCartItemCount = 0
         if shoppingCartItems != None:
-            shoppingCartItemCount = len(shoppingCartItems)
+            for item in shoppingCartItems:
+                if item.order == None or item.order.status == 0:
+                    shoppingCartItemCount = shoppingCartItemCount + 1 
         new_dirs["uf"] = uf
         new_dirs["shoppingCartItemCount"] = shoppingCartItemCount
     return render(request, url, new_dirs)
