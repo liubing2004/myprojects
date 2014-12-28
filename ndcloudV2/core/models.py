@@ -59,6 +59,9 @@ class Order(models.Model):
    gross = models.FloatField(default=0.0)
    paymentFee = models.FloatField(default=0)
    status = models.IntegerField(default=0)
+   
+   def __str__(self):
+        return "id="+str(self.id)
     
 class ShopCartItem(models.Model):
     user = models.ForeignKey(User)
@@ -68,7 +71,7 @@ class ShopCartItem(models.Model):
     sizey = models.FloatField(default=0)
     sizez = models.FloatField(default=0)    
     quantity = models.IntegerField(default=0)
-    order = models.ForeignKey(Order, default=0)
+    order = models.ForeignKey(Order, null=True)
     
     @property
     def getPrice(self):
@@ -77,6 +80,9 @@ class ShopCartItem(models.Model):
     @property
     def getTotalPrice(self):
         return round(self.priceUnit.price * self.sizex * self.sizey * self.sizez * self.quantity , 2)
+    
+    def __str__(self):
+        return str(self.id)
     
     
 

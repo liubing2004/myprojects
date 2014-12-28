@@ -330,18 +330,29 @@ def shopcart(request):
         sizez = float(request.POST.get("sizez_hidden"))
         priceUnit =  get_object_or_404(PriceUnit, pk=priceUnitId)
         project = get_object_or_404(ProjectProfile, pk=projectId)
-        shopcartItems = list(ShopCartItem.objects.filter(user=request.user, priceUnit=priceUnit, 
+        completeOrders = Order.objects.filter(status=utils.OrderStatus.success)
+        
+        print "complete orders:",completeOrders
+        
+        shopcartItems = list(ShopCartItem.objects.exclude(order__in=completeOrders).filter(user=request.user, priceUnit=priceUnit, 
                                                          project=project, sizex=sizex, sizey=sizey, sizez=sizez))
+        
+        
         if shopcartItems == None or len(shopcartItems) ==0 :
             shopcartItem = ShopCartItem(user=request.user, priceUnit=priceUnit, project=project, 
-                                        sizex=sizex, sizey=sizey, sizez=sizez, quantity=1)
+                                        sizex=sizex, sizey=sizey, sizez=sizez, quantity=1,
+                                        order = None)
+        elif len(shopcartItems) > 1:
+            raise Http404
         else:
             shopcartItem = shopcartItems[0]
+                
+            #shopcartItem = shopcartItems[0]
             shopcartItem.quantity = shopcartItem.quantity + 1
         shopcartItem.save()
         
 
-    shopCartItems = ShopCartItem.objects.filter(user = request.user)
+    shopCartItems = getShopCartItems(request.user)
     return render_internal(request,'payment/shopcart.html',{"shopCartItems":shopCartItems})
     
  
@@ -380,7 +391,7 @@ def shipping(request):
 def shopreview(request):
     profile = UserProfile.objects.get(user=request.user)
     shippingAddress = getShippingAddress(request.user)
-    shopCartItems = ShopCartItem.objects.filter(user = request.user)
+    shopCartItems =  getShopCartItems(request.user)
     if shopCartItems == None or len(shopCartItems)==0:
         raise Http404
     shipping_cost = 6.5 #hard code
@@ -390,9 +401,13 @@ def shopreview(request):
     total_price = subtotal_price + shipping_cost
     
     invoice = getInvoice(request.user, shopCartItems)
-    order = Order.objects.filter(invoice=invoice)
+    order = Order.objects.exclude(status=\
+            utils.OrderStatus.success).filter(invoice=invoice, user=request.user)
     if order == None or len(order) == 0:
         order = Order()
+    elif len(order)>1:
+        print "error orders:", order
+        raise Http404
     else:
         order = order[0]
         
@@ -452,14 +467,9 @@ def render_internal(request, url, dirs):
     new_dirs = dirs
     if request.user.id != None:
         uf = UserProfile.objects.get(user=request.user)
-        shoppingCartItems = ShopCartItem.objects.filter(user=request.user)
-        shoppingCartItemCount = 0
-        if shoppingCartItems != None:
-            for item in shoppingCartItems:
-                if item.order == None or item.order.status == 0:
-                    shoppingCartItemCount = shoppingCartItemCount + 1 
+        shoppingCartItems = getShopCartItems(request.user)
         new_dirs["uf"] = uf
-        new_dirs["shoppingCartItemCount"] = shoppingCartItemCount
+        new_dirs["shoppingCartItemCount"] = len(shoppingCartItems)
     return render(request, url, new_dirs)
 
 def getShippingAddress(user):
@@ -479,6 +489,20 @@ def getInvoice(user, shoppingCarts=list()):
     m = hashlib.md5()
     m.update(s)
     return m.hexdigest()
+
+def getShopCartItems(user):
+    completeOrders = Order.objects.filter(status=utils.OrderStatus.success)
+    shopCartItems = ShopCartItem.objects.exclude(order__in=completeOrders).filter(user = user)
+    print "shop cart items:", shopCartItems
+    realShopCartItems = list()
+    if shopCartItems==None:
+        return realShopCartItems
+    for item in shopCartItems:
+        print item
+        if item.order != None and item.order.status>0:
+            continue
+        realShopCartItems.append(item)
+    return realShopCartItems
     
 
 

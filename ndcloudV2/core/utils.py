@@ -5,6 +5,12 @@ class ProjectStatus(Enum):
     submit = 0
     success = 1
     fail = 2
+    
+class OrderStatus(Enum):
+    submit = 0
+    success = 1
+    fail = 2
+    
 
 def isValidImageName(img_name):
     img_name = img_name.lower()
