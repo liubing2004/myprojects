@@ -20,7 +20,7 @@
         </div>
         <div class="col-md-10 well admin-content" id="widgets">
             {% for project in projects %}
-        	{% if forloop.counter0|divisibleby:3  %}
+        	{% if forloop.counter0|divisibleby:4  %}
          	<div class="row">
         	{% endif %}
           	 <div class="col-md-4 portfolio-item">
@@ -31,7 +31,7 @@
                     <a href="/projectdetail/{{project.id}}">{{project.name}}</a>
                 </h3>
             </div>
-         	{% if forloop.counter|divisibleby:3 or forloop.counter == projects_size %}    
+         	{% if forloop.counter|divisibleby:4 or forloop.counter == projects_size %}    
          	</div>
          	{% endif %}
          	{% endfor %}

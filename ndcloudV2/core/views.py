@@ -90,9 +90,11 @@ def register(request):
 def myprofile(request):    
     projects = list(ProjectProfile.objects.filter(status = utils.ProjectStatus.success, user=request.user))
     orderedItems = getOrderedItems(request.user)
+    print orderedItems
     return render_internal(request,'myaccount/myprofile.html',
                            {"projects":projects,
-                            "orderedItems":orderedItems})
+                            "orderedItems":orderedItems,
+                            'projects_size':len(projects),})
 
 
 @login_required(login_url='/login')
