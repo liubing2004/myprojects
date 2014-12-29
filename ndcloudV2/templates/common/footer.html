@@ -21,7 +21,10 @@
       validatorFunction : function(value, $el, config, language, $form) {
     	  var extension = value.replace(/^.*\./, '');
     	  console.log("extension:"+extension);
-          return extension == "obj";
+    	  if (extension == "obj" || extension == "zip"){
+    		  return true;
+    	  }
+          return false;
       },
       errorMessage : 'You have to give an even number',
       errorMessageKey: 'badEvenNumber'
