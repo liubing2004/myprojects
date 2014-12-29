@@ -11,7 +11,7 @@ django.setup()
 
 
 """
-program start here
+program starts here
 """
 from core.models import *
 import core.utils as utils
