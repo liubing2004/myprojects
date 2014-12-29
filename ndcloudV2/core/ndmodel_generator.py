@@ -16,25 +16,35 @@ program start here
 from core.models import *
 import core.utils as utils
 
+OSM_DIR = "/home/ubuntu/dev/program/osm-bundler-python/"
+PIC_DIR_TEMPLATE = prj_home + "/medias/upload/%d/original/"
+MODEL_DIR_TEMPLATE = prj_home + "/medias/upload/%d/original_models/"
+
 
 def main():
     submit_projects = getSubmittedProjects()
     if submit_projects != None:
         for project in submit_projects:
-            runosm(project.id)
-            project.status = utils.ProjectStatus.success
-            project.threedmodel = "normal.obj"
-            project.texture = "normal.obj.mtl"
-            project.save()
+            if runosm(project.id):
+                project.status = utils.ProjectStatus.success
+                project.threedmodel = "normal.obj"
+                project.texture = "normal.obj.mtl"
+                project.save()
+            else:
+                project.status = utils.ProjectStatus.fail
+                project.save()
 
 
 def runosm(projectId):
-    picdir = prj_home + "/medias/upload/%d/original" %(projectId)
-    modeldir = prj_home + "/medias/upload/%d/original_models/" %(projectId)
-    cmd = "sh /home/ubuntu/dev/program/osm-bundler-python/runosm.sh " + picdir
+    picdir = PIC_DIR_TEMPLATE %(projectId)
+    modeldir = MODEL_DIR_TEMPLATE %(projectId)
+    cmd = "cd %s; sh runosm.sh %s; cd %s"  %(OSM_DIR, picdir, prj_home)
     os.system(cmd)
-    cmd = "cp /home/ubuntu/dev/program/osm-bundler-python/final/normal.* "+modeldir
+    cmd = "cp %sfinal/normal.*  %s" %(OSM_DIR, modeldir)
     os.system(cmd)
+    if os.path.isfile("%sfinal/normal.obj" %(OSM_DIR)):
+        return True
+    return False
     
 
 
