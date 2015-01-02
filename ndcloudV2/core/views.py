@@ -11,7 +11,7 @@ from django.contrib.auth.models import User
 from core.models import *
 import os, zipfile, time, hashlib
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
-import utils
+import utils, shutil
 #from matplotlib.font_manager import path
 from paypal.standard.forms import PayPalPaymentsForm
 from paypal.standard.conf import POSTBACK_ENDPOINT, SANDBOX_POSTBACK_ENDPOINT
@@ -105,12 +105,10 @@ def upload_project(request):
     if request.FILES == None or len(request.FILES.items())==0:
         return render_internal(request,'myaccount/upload.html',{})
     
-    project_name = request.POST.get("project_name", "").strip()
+    #project_name = request.POST.get("project_name", "").strip()
     project_file = request.FILES.get("project")
-    project_image = request.FILES.get("project_image")
+    #project_image = request.FILES.get("project_image")
     is3dmodel = (request.POST.get("is3dmodel")=="on")
-    
-    print is3dmodel, project_name, project_file, project_image
     
     user = request.user
    
@@ -122,7 +120,7 @@ def upload_project(request):
             if not utils.isValidImageName(img_name):
                 return render_internal(request,'myaccount/upload.html',{})
         status = utils.ProjectStatus.submit
-        project_profile = ProjectProfile(user=user, name=project_name, status=status, profile_image=project_image.name)
+        project_profile = ProjectProfile(user=user, status=status)
         project_profile.save()
         
     else:
@@ -136,9 +134,8 @@ def upload_project(request):
         else:
             threedmodel = project_file.name
             texture = ""
-        status = utils.ProjectStatus.success
-        project_profile = ProjectProfile(user=user, name=project_name, status=status, 
-                                         profile_image=project_image.name, 
+        status = utils.ProjectStatus.submit
+        project_profile = ProjectProfile(user=user, status=status, 
                                          threedmodel = threedmodel,
                                          texture = texture)
         project_profile.save()
@@ -160,7 +157,6 @@ def upload_project(request):
         path = original_pic_directory + project_file.name
         outpath = original_pic_directory
     
-    print path
     if project_file.name.endswith("zip"):
         dest = open(path, 'w')
         if project_file.multiple_chunks:
@@ -181,16 +177,67 @@ def upload_project(request):
             dest.write(project_file.read())
         dest.close() 
     
-    profile_image_path = settings.BASE_DIR+"/medias/upload/%d/%s" %(project_profile.id, project_profile.profile_image);
-    dest = open(profile_image_path, 'w')
-    if project_image.multiple_chunks:
-        for c in project_image.chunks():
-                dest.write(c)
-    else:
-        dest.write(project_image.read())
+#     profile_image_path = settings.BASE_DIR+"/medias/upload/%d/%s" %(project_profile.id, project_profile.profile_image);
+#     dest = open(profile_image_path, 'w')
+#     if project_image.multiple_chunks:
+#         for c in project_image.chunks():
+#                 dest.write(c)
+#     else:
+#         dest.write(project_image.read())
     
     #return render_internal(request, 'myaccount/upload_confirm.html', {})
-    return redirect("/projectdetail/%d" %(project_profile.id))
+    return redirect("/project/update/%d" %(project_profile.id))
+
+
+@login_required(login_url='/login')  
+@transaction.atomic  
+def project_update(request, project_id):
+    project = get_object_or_404(ProjectProfile, pk=project_id)
+    default_color_url = "white_plastic.png"
+    if request.method == 'GET':
+        return render_internal(request, 'ndmodel/project_update.html', 
+                           {"project":project,
+                            'default_color_url':default_color_url,})
+    
+    projectImageObjects = ProjectImage.objects.filter(project=project)
+    projectimages = request.FILES.getlist("project_images", None)
+    projectimages_directory = settings.BASE_DIR+"/medias/upload/%d/projectimages/" %(project.id) 
+    if not os.path.exists(projectimages_directory):
+        os.makedirs(projectimages_directory)
+    if projectimages!=None and len(projectimages)>0:
+        projectimages_directory = settings.BASE_DIR+"/medias/upload/%d/projectimages/" %(project.id) 
+        shutil.rmtree(projectimages_directory)
+        os.mkdir(projectimages_directory)
+    
+        for img in projectimages:
+            dest_path = projectimages_directory + "/"+img.name
+            dest = open(dest_path, 'w')
+            if img.multiple_chunks:
+                for c in img.chunks():
+                    dest.write(c)
+            else:
+                dest.write(img.read())
+        for pio in projectImageObjects:
+            pio.delete()
+        
+        profileImage = None
+        for img in projectimages:
+            if profileImage == None:
+                profileImage = img.name
+                project.profile_image = profileImage
+                project.save()
+            pio = ProjectImage(project=project, name = img.name)
+            pio.save()
+    else:
+        if projectImageObjects==None or projectImageObjects!=None and len(projectImageObjects)==0:
+            raise Http404
+    
+    project_name = request.POST.get("project_name", "").strip()
+    project.name = project_name
+    project.status = utils.ProjectStatus.success
+    project.save()
+    
+    return redirect("/projectdetail/%d"%(project.id))
 
    
 
@@ -222,12 +269,14 @@ def project_detail(request, project_id):
     default_material = "Plastic"
     default_color = "White"
     default_color_url = "white_plastic.png"
+    project_images = ProjectImage.objects.filter(project=project)
     return render_internal(request, 'ndmodel/project_detail.html', 
                            {'project':project, 'owner_uf':owner_uf,
                             'owner_other_projects':owner_other_projects,
                             'default_material':default_material,
                             'default_color':default_color,
                             'default_color_url':default_color_url,
+                            'project_images':project_images
                             })    
 @transaction.atomic
 def getprice(request):
@@ -335,6 +384,8 @@ def project_list(request):
                             'page_range':range(start_page, end_page+1),
                             'pre_page':pre_page,
                             'next_page':next_page})
+    
+
     
 def aboutus(request):
 	return render_internal(request, 'index/aboutus.html', {})

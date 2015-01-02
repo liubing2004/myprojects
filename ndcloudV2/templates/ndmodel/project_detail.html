@@ -18,22 +18,20 @@
 			  	<div role="tabpanel" class="tab-pane active" id="imagelist_tabpane">
 					<div id="slider" class="flexslider">
 					  <ul class="slides">
+					  {% for img in project_images%}
 					    <li>
-					      <img src="/medias/upload/{{project.id}}/{{project.profile_image}}" />
+					      <img src="/medias/upload/{{project.id}}/projectimages/{{img.name}}" />
 					    </li>
-					    <li>
-					      <img src="/medias/upload/{{project.id}}/{{project.profile_image}}" />
-					    </li>
+					  {% endfor %}
 					  </ul>
 					</div>
 					<div id="carousel" class="flexslider">
 					  <ul class="slides">
+					   {% for img in project_images%}
 					    <li>
-					      <img src="/medias/upload/{{project.id}}/{{project.profile_image}}" />
+					      <img src="/medias/upload/{{project.id}}/projectimages/{{img.name}}" />
 					    </li>
-					    <li>
-					      <img src="/medias/upload/{{project.id}}/{{project.profile_image}}" />
-					    </li>
+					  {% endfor %}
 					  </ul>
 					</div>
 			    
@@ -52,13 +50,7 @@
 					<div class="clearfix"></div>
 				</div>
 
-			  </div>
-
-           
-           
-<!--            			<h3>{{project.name}} by {{owner_uf.name}}</h3> -->
-
-	 				
+			  </div>		
           </div>
            
 

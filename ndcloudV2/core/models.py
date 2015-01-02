@@ -27,6 +27,13 @@ class ProjectProfile(models.Model):
     
     def __str__(self):
         return "id="+str(self.id)+", name="+self.name
+
+class ProjectImage(models.Model):
+    project = models.ForeignKey(ProjectProfile)
+    name = models.CharField(max_length=200, default="")
+    
+    def __str__(self):
+        return "id="+str(self.id)+", name="+self.name
     
 class PriceUnit(models.Model):
     price = models.FloatField(default=0)

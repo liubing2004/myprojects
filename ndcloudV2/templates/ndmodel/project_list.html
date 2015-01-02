@@ -17,7 +17,7 @@
         {% endif %}
            <div class="col-md-3 portfolio-item">
                 <a href="/projectdetail/{{project.id}}">
-                    <img class="img-responsive" src="/medias/upload/{{project.id}}/{{project.profile_image}}" alt="">
+                    <img class="img-responsive" src="/medias/upload/{{project.id}}/projectimages/{{project.profile_image}}" alt="">
                 </a>
                 <h3>
                     <a href="/projectdetail/{{project.id}}">{{project.name}}</a>
@@ -58,9 +58,6 @@
             </div>
         </div>
         <!-- /.row -->
-        
-        
 
-        <hr>
 
 {% include "common/footer.html" %}

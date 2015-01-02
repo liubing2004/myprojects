@@ -1,0 +1,123 @@
+{% include "common/header.html" %}
+<link rel="stylesheet" href="/medias/plugins/flexslider/flexslider.css" type="text/css" media="screen" />
+   <title>Project Update </title>
+   
+
+<div class="container-fluid">
+					
+			
+		<div class="col-md-6">
+				<h2 class="dark-grey">Update Your Project</h2>
+				
+				<br>
+				<form class="project_update_form" id="project_update_form" role="form" action="/project/update/{{project.id}}" method="post"  
+				enctype="multipart/form-data">
+				{% csrf_token %}
+				<div class="form-group col-lg-8">
+						<label for="project_name" >Project Name</label>
+						<input type="text" name="project_name" class="form-control" id="project_name" value="{{project.name}}" data-validation="length" 
+        					data-validation-length="min4" data-validation-error-msg="You need to enter a valid project name" required>
+        				
+				</div>
+				
+				
+				<div class="form-group col-lg-8">
+						<label for="category" >Category</label>
+						<input type="text" name="category" class="form-control" id="category" value="" data-validation="length" 
+        					data-validation-length="min4" data-validation-error-msg="You need to enter a valid category" required>
+        				
+				</div>
+				
+				<div class="form-group col-lg-8">
+						<label for="tag" >Tag</label>
+						<input type="text" name="tag" class="form-control" id="tag" value="" data-validation="length" 
+        					data-validation-length="min4" data-validation-error-msg="You need to enter valid tags" required>
+        				
+				</div>
+				
+				<div class="form-group col-lg-8">
+					<label for="filename" >Add Pictures</label>
+					<input type="file" class="filestyle" name="project_images" data-buttonName="btn-primary"
+							 data-validation="mime size" 
+							 data-validation-allowing="jpg, jpeg, png, bmp" 
+		 					 data-validation-max-size="3M"
+							 data-validation-error-msg="You need to upload a picture." multiple>
+				</div>				
+				
+				<div class="form-group col-lg-8">
+					<button class="btn btn-sm btn-primary" type="submit">Publish</button>
+				</div>	
+				</form> 	
+			</div>
+			
+		
+			<div class="col-md-6">
+				<h3 class="dark-grey">Here is your model</h3>
+				
+					<div class="embed-responsive embed-responsive-4by3"  >
+	 					<iframe id="iframe_3dview" name="iframe_3dview" class="embed-responsive-item" 
+	 					src="/project3dview/{{project.id}}?color={{default_color_url}}" frameborder="0" onmousewheel >
+	 					</iframe>
+	 				</div> 
+			</div>
+</div>
+  
+ 
+ 
+<script src="/medias/plugins/flexslider/jquery.flexslider.js"></script>
+
+       
+	<script>
+		jQuery(document).ready(function() {
+			
+			// The slider being synced must be initialized first
+			  $('#carousel').flexslider({
+			    animation: "slide",
+			    controlNav: false,
+			    animationLoop: false,
+			    slideshow: false,
+			    itemWidth: 150,
+			    itemMargin: 5,
+			    asNavFor: '#slider'
+			  });
+			   
+			  $('#slider').flexslider({
+			    animation: "slide",
+			    controlNav: false,
+			    animationLoop: false,
+			    slideshow: false,
+			    sync: "#carousel"
+			  });
+			
+	
+	
+	    $(".swatch-wrapper").css( "cursor", "pointer" );
+	    
+	    $( "#slider-1" ).slider({
+	    	min:0,
+	    	max:255,
+            value: 200,
+            slide: function( event, ui ) {
+            	console.log("value:"+ui.value);
+            	var curr_url = $("#iframe_3dview").attr("src");
+            	var color = getParameterByName("color", curr_url);
+            	console.log("curr_url:"+curr_url+color);
+            	$("#iframe_3dview").attr('src',"/project3dview/{{project.id}}?background="+ ui.value +"&color="+color);
+            	
+            }
+        });
+	    
+	    $('#3dview_tab a').click(function(e) {
+	    	var curr_url = $("#iframe_3dview").attr("src");
+	    	$("#iframe_3dview").attr('src',curr_url);
+    	});
+	    
+	    
+	
+	});	
+		
+	
+   </script>
+
+   
+{% include "common/footer.html" %}

@@ -7,37 +7,20 @@
 		<div class="container-page">				
 			<div class="col-md-6">
 				<h2 class="dark-grey">Upload 3D Project</h2>
+				<br>
 				
 				<div class="form-group col-lg-8">
-						<label for="project_name" >Project Name</label>
-						<input type="text" name="project_name" class="form-control" id="project_name" value="" data-validation="length" 
-        					data-validation-length="min4" data-validation-error-msg="You need to enter a valid project name" required>
-        				
-				</div>
-				
-				<div class="form-group col-lg-8">
-					<label for="filename" >File</label>
 					<input type="file" class="filestyle" id="project_input" name="project" data-buttonName="btn-primary" 
 						data-validation="custom_modelext size required" 
 					    data-validation-max-size="25M"
 						data-validation-error-msg="You need to upload a zip or obj file." required>
 				</div>
 				
-				
-				<div class="form-group col-lg-8">
-					<label for="filename" >Profile Picture</label>
-					<input type="file" class="filestyle" name="project_image" data-buttonName="btn-primary"
-							 data-validation="mime size required" 
-							 data-validation-allowing="jpg, jpeg, png, bmp" 
-		 					 data-validation-max-size="3M"
-							 data-validation-error-msg="You need to upload a picture." required>
-				</div>
-				
 				<div class="form-group col-lg-8">
 					<div class="checkbox">
   						<label for="is3dmodel">
     						<input type="checkbox" name="is3dmodel" id="is3dmodel"  required>
-   										I am uploading 3d a model.
+   										I am uploading a 3d model.
   						</label>
 					</div>
 				</div>
