@@ -11,6 +11,28 @@ class OrderStatus(Enum):
     success = 1
     fail = 2
     
+class Material(Enum):
+    plastic = "Plastic"
+    resin = "Resin"
+    alumide = "Alumide"
+    multicolor = "Multicolor"
+    ceramic = "Ceramic"
+    
+class SizeUnit(Enum):
+    cm = "cm"
+    mm = "mm"
+    
+class Color(Enum):
+    white = "White"
+    red = "Red"
+    black = "Black"
+    blue = "Blue"
+    green = "Green"
+    yellow = "Yellow" 
+    
+    
+    
+    
 
 def isValidImageName(img_name):
     img_name = img_name.lower()
