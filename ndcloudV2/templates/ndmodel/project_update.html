@@ -36,16 +36,17 @@
 				</div>
 				
 				<div class="form-group col-lg-8">
-					<label for="filename" >Add Pictures</label>
+					<label for="filename" >Update Pictures</label>
 					<input type="file" class="filestyle" name="project_images" data-buttonName="btn-primary"
 							 data-validation="mime size" 
 							 data-validation-allowing="jpg, jpeg, png, bmp" 
 		 					 data-validation-max-size="3M"
 							 data-validation-error-msg="You need to upload a picture." multiple>
 				</div>				
-				
+
 				<div class="form-group col-lg-8">
-					<button class="btn btn-sm btn-primary" type="submit">Publish</button>
+					<input class="btn btn-sm btn-normal" type="submit" name="action" value="Update">
+					<input class="btn btn-sm btn-success" type="submit" name="action" value="Publish">
 				</div>	
 				</form> 	
 			</div>
@@ -54,11 +55,53 @@
 			<div class="col-md-6">
 				<h3 class="dark-grey">Here is your model</h3>
 				
+		   <!--  tab for image and 3d view-->
+           <div role="tabpanel">	
+	 		 <!-- Nav tabs -->
+			  <ul class="nav nav-tabs col-sm-6" role="tablist">
+			    
+			    <li role="presentation" id="imagelist_tab" class="active"><a href="#imagelist_tabpane" aria-controls="imagelist_tabpane" role="tab" data-toggle="tab">Images</a></li>
+			    <li role="presentation" id="3dview_tab" ><a href="#3dview_tabpane" aria-controls="3dview_tabpane" role="tab" data-toggle="tab" >3D View</a></li>
+			  </ul>
+			  <div class="clearfix"></div>
+			
+			  <!-- Tab panes -->
+			  <div class="tab-content">
+			  	<div role="tabpanel" class="tab-pane active" id="imagelist_tabpane">
+					<div id="slider" class="flexslider">
+					  <ul class="slides">
+					  {% for img in project_images%}
+					    <li>
+					      <img src="/medias/upload/{{project.id}}/projectimages/{{img.name}}" style="max-height:400px"/>
+					    </li>
+					  {% endfor %}
+					  </ul>
+					</div>
+					<div id="carousel" class="flexslider">
+					  <ul class="slides">
+					   {% for img in project_images%}
+					    <li>
+					      <img src="/medias/upload/{{project.id}}/projectimages/{{img.name}}" style="max-height:150px"/>
+					    </li>
+					  {% endfor %}
+					  </ul>
+					</div>
+			    
+			    </div>
+			  
+			  
+			    <div role="tabpanel" class="tab-pane" id="3dview_tabpane">
 					<div class="embed-responsive embed-responsive-4by3"  >
 	 					<iframe id="iframe_3dview" name="iframe_3dview" class="embed-responsive-item" 
 	 					src="/project3dview/{{project.id}}?color={{default_color_url}}" frameborder="0" onmousewheel >
 	 					</iframe>
 	 				</div> 
+					<div class="clearfix"></div>
+				</div>
+
+			  </div>		
+          	</div>
+          	<!--  end of tab for image and 3d view-->
 			</div>
 </div>
   
@@ -89,24 +132,6 @@
 			    sync: "#carousel"
 			  });
 			
-	
-	
-	    $(".swatch-wrapper").css( "cursor", "pointer" );
-	    
-	    $( "#slider-1" ).slider({
-	    	min:0,
-	    	max:255,
-            value: 200,
-            slide: function( event, ui ) {
-            	console.log("value:"+ui.value);
-            	var curr_url = $("#iframe_3dview").attr("src");
-            	var color = getParameterByName("color", curr_url);
-            	console.log("curr_url:"+curr_url+color);
-            	$("#iframe_3dview").attr('src',"/project3dview/{{project.id}}?background="+ ui.value +"&color="+color);
-            	
-            }
-        });
-	    
 	    $('#3dview_tab a').click(function(e) {
 	    	var curr_url = $("#iframe_3dview").attr("src");
 	    	$("#iframe_3dview").attr('src',curr_url);

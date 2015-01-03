@@ -91,10 +91,49 @@ def myprofile(request):
     projects = list(ProjectProfile.objects.filter(status = utils.ProjectStatus.success, user=request.user))
     orderedItems = getOrderedItems(request.user)
     print orderedItems
+    if request.method == "POST":
+        user_name = request.POST.get("user_name", "")
+        user_phone = request.POST.get("user_phone", "")
+        uf = UserProfile.objects.get(user=request.user)
+        uf.name = user_name
+        uf.phone = user_phone
+        uf.save()
+        
     return render_internal(request,'myaccount/myprofile.html',
                            {"projects":projects,
                             "orderedItems":orderedItems,
                             'projects_size':len(projects),})
+    
+def userimage_update(request):
+    print request
+    print "files:", request.FILES
+    uf = UserProfile.objects.get(user=request.user)
+    user_image_file = request.FILES.get("userimage")
+    
+    user_image_dir = settings.BASE_DIR + "/medias/upload/user/%d" % (uf.id)
+    print user_image_dir, user_image_file.name
+    if not os.path.exists(user_image_dir):
+        os.makedirs(user_image_dir)
+    
+    if uf.profile_image.strip() != "":
+        os.remove(user_image_dir+"/"+uf.profile_image)   
+    dest_path = user_image_dir + "/"+user_image_file.name
+    print "dest path", dest_path
+    dest = open(dest_path, 'w')
+    if user_image_file.multiple_chunks:
+          for c in user_image_file.chunks():
+              dest.write(c)
+    else:
+          dest.write(user_image_file.read())
+    dest.close()
+    
+    uf.profile_image = user_image_file.name
+    uf.save()
+    
+        
+    response = "{\"profile_image\":\"%s\"}" %("/medias/upload/user/"+str(uf.id)+"/"+user_image_file.name)
+    print response
+    return HttpResponse(response)
 
 
 @login_required(login_url='/login')
@@ -177,14 +216,6 @@ def upload_project(request):
             dest.write(project_file.read())
         dest.close() 
     
-#     profile_image_path = settings.BASE_DIR+"/medias/upload/%d/%s" %(project_profile.id, project_profile.profile_image);
-#     dest = open(profile_image_path, 'w')
-#     if project_image.multiple_chunks:
-#         for c in project_image.chunks():
-#                 dest.write(c)
-#     else:
-#         dest.write(project_image.read())
-    
     #return render_internal(request, 'myaccount/upload_confirm.html', {})
     return redirect("/project/update/%d" %(project_profile.id))
 
@@ -195,9 +226,13 @@ def project_update(request, project_id):
     project = get_object_or_404(ProjectProfile, pk=project_id)
     default_color_url = "white_plastic.png"
     if request.method == 'GET':
+        project_images = ProjectImage.objects.filter(project=project)
         return render_internal(request, 'ndmodel/project_update.html', 
                            {"project":project,
-                            'default_color_url':default_color_url,})
+                            'default_color_url':default_color_url,
+                            'project_images':project_images})
+    
+    action = request.POST.get('action')
     
     projectImageObjects = ProjectImage.objects.filter(project=project)
     projectimages = request.FILES.getlist("project_images", None)
@@ -234,10 +269,14 @@ def project_update(request, project_id):
     
     project_name = request.POST.get("project_name", "").strip()
     project.name = project_name
-    project.status = utils.ProjectStatus.success
+    if action == "Publish":
+        project.status = utils.ProjectStatus.success
     project.save()
     
-    return redirect("/projectdetail/%d"%(project.id))
+    if action == "Publish":
+        return redirect("/projectdetail/%d"%(project.id))
+    else:
+        return redirect("/project/update/%d"%(project.id))
 
    
 

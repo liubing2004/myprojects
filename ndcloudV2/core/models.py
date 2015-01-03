@@ -9,6 +9,8 @@ class UserProfile(models.Model):
 
     # Other fields here
     name = models.CharField(max_length=20, default="")
+    profile_image = models.CharField(max_length=200, default="")
+    phone = models.CharField(max_length=100, default="")
     
     def __str__(self):
         return self.name + "," + self.user.username

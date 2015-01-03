@@ -3,40 +3,83 @@
         <div class="col-md-2">
             <ul class="nav nav-pills nav-stacked admin-menu">
                 <li class="active"><a href="#" data-target-id="home"><i class="fa fa-home fa-fw"></i>Home</a></li>
-                <li><a href="http://www.jquery2dotnet.com" data-target-id="widgets"><i class="fa fa-list-alt fa-fw"></i>My Projects</a></li>
-                <li><a href="http://www.jquery2dotnet.com" data-target-id="pages"><i class="fa fa-file-o fa-fw"></i>My Orders</a></li>
+                <li><a href="#" data-target-id="projects"><i class="fa fa-list-alt fa-fw"></i>My Projects</a></li>
+                <li><a href="#" data-target-id="orders"><i class="fa fa-shopping-cart fa-fw"></i>My Orders</a></li>
             </ul>
         </div>
         <div class="col-md-10 well admin-content" id="home">
-            <p>
-                Hello! This is a forked snippet.<br>
-                It is for users, which use one-page layouts.
-            </p>
-            <p>
-                Here's the original one from BhaumikPatel: <a href="http://bootsnipp.com/snippets/featured/vertical-admin-menu" target="_BLANK">Vertical Admin Menu</a>
-                <br><br>
-                <strong>Thank you Bhaumik!</strong>
-            </p>
+        	<div class="row">
+        	<div class="col-md-4">
+                <img class="img-responsive" src="/medias/upload/user/{{uf.id}}/{{uf.profile_image}}" 
+                alt="" id="profile_image" style="width:250px; height:250px">
+                <br>
+                	<form role="form" id="userimage_form" action="{% url 'userimage_update' %}" enctype="multipart/form-data">
+                		{% csrf_token %}
+						<input type="file" class="filestyle pull-right" data-buttonText="Upload" id="userimage" name="userimage" 
+							data-buttonName="btn-default" data-input="false" 
+							onchange="uploadUserImage();" required>
+					</form>
+				
+                
+        	</div>
+        	<div class="col-md-6">
+            <form class="form-horizontal" role="form" action="{% url 'myprofile' %}" method="post">
+		      {% csrf_token %}
+		        <fieldset>
+				   <!-- Text input-->
+		          <div class="form-group">
+		            <label class="col-sm-3 control-label" for="textinput">Name</label>
+		            <div class="col-sm-9">
+		              <input type="text" name="user_name" placeholder="Name" 
+		              		value="{{uf.name}}" 
+		              		class="form-control" data-validation="length" 
+		        			data-validation-length="min4" 
+		        			data-validation-error-msg="You did not enter a valid name." required>
+		            </div>
+		          </div>
+
+		          
+		          <!-- Text input-->
+		          <div class="form-group">
+		            <label class="col-sm-3 control-label" for="textinput">Phone</label>
+		            <div class="col-sm-9">
+		              <input type="text" name="user_phone" placeholder="Phone" class="form-control" 
+		              		value="{{uf.phone}}">
+		            </div>
+		          </div>
+		
+		          <div class="form-group">
+		            <div class="col-sm-offset-3 col-sm-9">
+		              <div class="pull-right">
+		                <button type="submit" class="btn btn-primary">Save</button>
+		              </div>
+		            </div>
+		          </div>
+		
+		        </fieldset>
+		      </form>
+		      </div>
+		      </div>
         </div>
-        <div class="col-md-10 well admin-content" id="widgets">
+        <div class="col-md-10 well admin-content" id="projects">
             {% for project in projects %}
-        	{% if forloop.counter0|divisibleby:4  %}
+        	{% if forloop.counter0|divisibleby:5  %}
          	<div class="row">
         	{% endif %}
-          	 <div class="col-md-4 portfolio-item">
-                <a href="/projectdetail/{{project.id}}">
+          	 <div class="col-md-2 portfolio-item">
+                <a href="/project/update/{{project.id}}">
                     <img class="img-responsive" src="/medias/upload/{{project.id}}/projectimages/{{project.profile_image}}" alt="">
                 </a>
                 <h3>
-                    <a href="/projectdetail/{{project.id}}">{{project.name}}</a>
+                    <a href="/project/update/{{project.id}}">{{project.name}}</a>
                 </h3>
             </div>
-         	{% if forloop.counter|divisibleby:4 or forloop.counter == projects_size %}    
+         	{% if forloop.counter|divisibleby:5 or forloop.counter == projects_size %}    
          	</div>
          	{% endif %}
          	{% endfor %}
         </div>
-        <div class="col-md-10 well admin-content" id="pages">
+        <div class="col-md-10 well admin-content" id="orders">
               <div class="row">
 		        <div class="col-sm-12 col-md-10 col-md-offset-1" >
 		            <table class="table table-hover" id="shopcarttable">
@@ -82,23 +125,56 @@
 <script>    
  $(document).ready(function()
 {
-    var navItems = $('.admin-menu li > a');
-    var navListItems = $('.admin-menu li');
-    var allWells = $('.admin-content');
-    var allWellsExceptFirst = $('.admin-content:not(:first)');
+     var navItems = $('.admin-menu li > a');
+     var navListItems = $('.admin-menu li');
+     var allWells = $('.admin-content');
+     var allWellsExceptFirst = $('.admin-content:not(:first)');
     
-    allWellsExceptFirst.hide();
-    navItems.click(function(e)
-    {
-        e.preventDefault();
-        navListItems.removeClass('active');
-        $(this).closest('li').addClass('active');
+     allWellsExceptFirst.hide();
+     navItems.click(function(e)
+     {
+         e.preventDefault();
+         navListItems.removeClass('active');
+         $(this).closest('li').addClass('active');
         
-        allWells.hide();
-        var target = $(this).attr('data-target-id');
-        $('#' + target).show();
-    });
+         allWells.hide();
+         var target = $(this).attr('data-target-id');
+         $('#' + target).show();
+     });
 });
+ 
+	function uploadUserImage(){
+		$("#userimage_form").submit(function(e)
+		{
+		 
+		    var formObj = $(this);
+		    var formURL = formObj.attr("action");
+		    var formData = new FormData(this);
+		    $.ajax({
+		        url: formURL,
+		    	type: 'POST',
+		        data:  formData,
+		    	mimeType:"multipart/form-data",
+		    	contentType: false,
+		        cache: false,
+		        processData:false,
+		    	success: function(data, textStatus, jqXHR)
+		    	{
+		 			console.log("data:"+data);
+		 			var obj = jQuery.parseJSON(data);
+					var profile_image = obj["profile_image"];
+		 			$("#profile_image").attr("src",profile_image);
+		 			$("#userimage").filestyle('clear');
+		    	},
+		     	error: function(jqXHR, textStatus, errorThrown) 
+		     	{
+		     	}          
+		    });
+		    e.preventDefault(); //Prevent Default action. 
+		}); 
+		$("#userimage_form").submit();
+
+	}
  </script>
 
 {% include "common/footer.html" %}

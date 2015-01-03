@@ -3,9 +3,9 @@
        <!-- Portfolio Item Row -->
        <div class="row">
 
-           <div class="col-md-7" role="tabpanel">
-	
-	 			 <!-- Nav tabs -->
+			<!--  tab for image and 3d view-->
+           <div class="col-md-7" role="tabpanel">	
+	 		 <!-- Nav tabs -->
 			  <ul class="nav nav-tabs col-sm-6" role="tablist">
 			    
 			    <li role="presentation" id="imagelist_tab" class="active"><a href="#imagelist_tabpane" aria-controls="imagelist_tabpane" role="tab" data-toggle="tab">Images</a></li>
@@ -20,7 +20,7 @@
 					  <ul class="slides">
 					  {% for img in project_images%}
 					    <li>
-					      <img src="/medias/upload/{{project.id}}/projectimages/{{img.name}}" />
+					      <img src="/medias/upload/{{project.id}}/projectimages/{{img.name}}" style="max-height:400px"/>
 					    </li>
 					  {% endfor %}
 					  </ul>
@@ -29,7 +29,7 @@
 					  <ul class="slides">
 					   {% for img in project_images%}
 					    <li>
-					      <img src="/medias/upload/{{project.id}}/projectimages/{{img.name}}" />
+					      <img src="/medias/upload/{{project.id}}/projectimages/{{img.name}}" style="max-height:150px"/>
 					    </li>
 					  {% endfor %}
 					  </ul>
@@ -51,7 +51,8 @@
 				</div>
 
 			  </div>		
-          </div>
+          	</div>
+          	<!--  end of tab for image and 3d view-->
            
 
            <div class="col-md-5">
