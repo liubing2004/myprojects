@@ -105,33 +105,21 @@ def myprofile(request):
                             'projects_size':len(projects),})
     
 def userimage_update(request):
-    print request
-    print "files:", request.FILES
     uf = UserProfile.objects.get(user=request.user)
     user_image_file = request.FILES.get("userimage")
     
     user_image_dir = settings.BASE_DIR + "/medias/upload/user/%d" % (uf.id)
-    print user_image_dir, user_image_file.name
     if not os.path.exists(user_image_dir):
         os.makedirs(user_image_dir)
-    
-    if uf.profile_image.strip() != "":
-        os.remove(user_image_dir+"/"+uf.profile_image)   
-    dest_path = user_image_dir + "/"+user_image_file.name
-    print "dest path", dest_path
-    dest = open(dest_path, 'w')
-    if user_image_file.multiple_chunks:
-          for c in user_image_file.chunks():
-              dest.write(c)
-    else:
-          dest.write(user_image_file.read())
-    dest.close()
-    
-    uf.profile_image = user_image_file.name
+    shutil.rmtree(user_image_dir)
+    os.makedirs(user_image_dir)
+        
+    imagename = utils.handle_uploaded_image(user_image_file, user_image_dir, 250, 250)
+    uf.profile_image = imagename
     uf.save()
     
         
-    response = "{\"profile_image\":\"%s\"}" %("/medias/upload/user/"+str(uf.id)+"/"+user_image_file.name)
+    response = "{\"profile_image\":\"%s\"}" %("/medias/upload/user/"+str(uf.id)+"/"+imagename)
     print response
     return HttpResponse(response)
 
@@ -277,6 +265,20 @@ def project_update(request, project_id):
         return redirect("/projectdetail/%d"%(project.id))
     else:
         return redirect("/project/update/%d"%(project.id))
+    
+@login_required(login_url='/login')  
+@transaction.atomic 
+def project_delete(request, project_id):
+    project = get_object_or_404(ProjectProfile, pk=project_id)
+    project_dir = settings.BASE_DIR+"/medias/upload/%d/" %(project.id)
+    if project.user != request.user and (not request.user.is_superuser):
+        raise Http404
+    project.delete()      
+    if os.path.exists(project_dir):
+        shutil.rmtree(project_dir)
+    
+    return redirect("/")
+    
 
    
 

@@ -53,7 +53,14 @@
 			
 		
 			<div class="col-md-6">
-				<h3 class="dark-grey">Here is your model</h3>
+				<div class="col-md-6">
+					<h4 class="dark-grey">Here is your model<h4>
+				</div>
+				<div class="col-md-6">
+					<a class="btn btn-danger pull-right" href="{% url 'project_delete' project.id %}" role="button">Delete</a>
+				</div>
+				<div class="clearfix"></div>
+				<br>
 				
 		   <!--  tab for image and 3d view-->
            <div role="tabpanel">	
