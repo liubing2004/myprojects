@@ -233,6 +233,10 @@
  					var geometry = object.content;
 					var mesh = new THREE.Mesh( geometry, material );
 					mesh.position.set( 0, 0, 0 );
+					console.log("geometry:"+mesh.geometry.boundingBox);
+					if (mesh.geometry.boundingBox === null) {
+			    		mesh.geometry.computeBoundingBox();
+			    	}
 					var bBox = mesh.geometry.boundingBox.clone();
 					
 					var disx = -(bBox.min.x + bBox.max.x)/2;
