@@ -231,25 +231,17 @@ def project_update(request, project_id):
         projectimages_directory = settings.BASE_DIR+"/medias/upload/%d/projectimages/" %(project.id) 
         shutil.rmtree(projectimages_directory)
         os.mkdir(projectimages_directory)
-    
-        for img in projectimages:
-            dest_path = projectimages_directory + "/"+img.name
-            dest = open(dest_path, 'w')
-            if img.multiple_chunks:
-                for c in img.chunks():
-                    dest.write(c)
-            else:
-                dest.write(img.read())
+        
         for pio in projectImageObjects:
             pio.delete()
-        
+    
         profileImage = None
         for img in projectimages:
+            imagename = utils.handle_uploaded_image(img, projectimages_directory, 450, 300)
             if profileImage == None:
-                profileImage = img.name
+                profileImage = imagename
                 project.profile_image = profileImage
-                project.save()
-            pio = ProjectImage(project=project, name = img.name)
+            pio = ProjectImage(project=project, name = imagename)
             pio.save()
     else:
         if projectImageObjects==None or projectImageObjects!=None and len(projectImageObjects)==0:

@@ -16,16 +16,16 @@
 			  <!-- Tab panes -->
 			  <div class="tab-content">
 			  	<div role="tabpanel" class="tab-pane active" id="imagelist_tabpane">
-					<div id="slider" class="flexslider">
+					<div id="slider" class="flexslider" >
 					  <ul class="slides">
 					  {% for img in project_images%}
 					    <li>
-					      <img src="/medias/upload/{{project.id}}/projectimages/{{img.name}}" style="max-height:400px"/>
+					      <img src="/medias/upload/{{project.id}}/projectimages/{{img.name}}" style="max-height:400px;"/>
 					    </li>
 					  {% endfor %}
 					  </ul>
 					</div>
-					<div id="carousel" class="flexslider">
+					<div id="carousel" class="flexslider" >
 					  <ul class="slides">
 					   {% for img in project_images%}
 					    <li>
