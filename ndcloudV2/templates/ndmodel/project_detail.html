@@ -362,8 +362,8 @@
 	    	 }
 	    	var sizey = parseFloat($("#modelsize_x").val().trim()) * {{project.modely}}/{{project.modelx}};
 	    	var sizez = parseFloat($("#modelsize_x").val().trim()) * {{project.modelz}}/{{project.modelx}};
-	    	$("#modelsize_y").val(sizey);
-	    	$("#modelsize_z").val(sizez);
+	    	$("#modelsize_y").val(Math.round(sizey*100)/100);
+	    	$("#modelsize_z").val(Math.round(sizez*100)/100);
 	    	updatePrice();	    	
 	    }	
 	    ); 
@@ -374,8 +374,8 @@
 	    	 }
 	    	var sizex = parseFloat($("#modelsize_y").val().trim()) * {{project.modelx}}/{{project.modely}};
 	    	var sizez = parseFloat($("#modelsize_y").val().trim()) * {{project.modelz}}/{{project.modely}};
-	    	$("#modelsize_x").val(sizex);
-	    	$("#modelsize_z").val(sizez);
+	    	$("#modelsize_x").val(Math.round(sizex*100)/100);
+	    	$("#modelsize_z").val(Math.round(sizez*100)/100);
 	    	updatePrice();	    	
 	    }	
 	    );
@@ -386,8 +386,8 @@
 	    	 }
 	    	var sizex = parseFloat($("#modelsize_z").val().trim()) * {{project.modelx}}/{{project.modelz}};
 	    	var sizey = parseFloat($("#modelsize_z").val().trim()) * {{project.modely}}/{{project.modelz}};
-	    	$("#modelsize_x").val(sizex);
-	    	$("#modelsize_y").val(sizey);
+	    	$("#modelsize_x").val(Math.round(sizex*100)/100);
+	    	$("#modelsize_y").val(Math.round(sizey*100)/100);
 	    	updatePrice();	    	
 	    }	
 	    );
