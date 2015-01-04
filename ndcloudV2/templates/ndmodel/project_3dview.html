@@ -21,6 +21,7 @@
 		<script src="/medias/dist/js/Detector.js"></script>
 		<script src="/medias/dist/js/stats.min.js"></script>
 		<script src="/medias/dist/js/OBJLoader.js"></script>
+		<script src="/medias/dist/js/STLLoader.js"></script>
 		
 	</head>
 
@@ -98,10 +99,33 @@
 
 				// model
 				// prepare loader and load the model
-				{% if loader == "OBJMTLLoader"  %}
+				{% if loader_config == "OBJMTLLoader"  %}
+					loadWithOBJMTLLoader(manager, onProgress, onError); 	
+				{% elif loader_config == "OBJLoader" %}				
+					loadWithOBJLoader(manager, onProgress, onError);				
+			    {% else %}
+			    	loadWithSTLLoader();
+				{% endif %}	
+
+			    
+			
+				// renderer
+				renderer = new THREE.WebGLRenderer( { antialias: true, preserveDrawingBuffer: true } );
+				renderer.setSize( render_width, render_height);
+				renderer.setClearColorHex( {{background_color}}, 1 );
 				
+				container = document.getElementById("container");
+				document.body.appendChild( container );
+				container.appendChild( renderer.domElement );
+				window.addEventListener( 'resize', onWindowResize, false );
 				
- 				var loader = new THREE.OBJMTLLoader();
+
+			}
+			
+			
+			
+			function loadWithOBJMTLLoader(manager, onProgress, onError){
+				var loader = new THREE.OBJMTLLoader();
 				loader.load('/medias/upload/{{project.id}}/original_models/{{project.threedmodel}}', 
 						'/medias/upload/{{project.id}}/original_models/{{project.texture}}', 
 						function(object) {  
@@ -143,9 +167,10 @@
 				  parent.setDimensions(disx_max, disy_max, disz_max);
 				  
 				}, onProgress, onError); 
-				
-				{% else %}
-				
+			}
+			
+			
+			function loadWithOBJLoader(manager, onProgress, onError){
 				var texture = new THREE.Texture();
 	    		var loader = new THREE.ImageLoader( manager );
 	    		loader.load( "/medias/dist/image/material/{{texture_url}}", function ( image ) {
@@ -163,32 +188,30 @@
                 		var disz_max = 0; 
                         object.traverse( function ( child ) {
 
-                                if ( child instanceof THREE.Mesh ) {
-
-                                        child.material.map = texture;
-                                        child.geometry.computeBoundingBox ();
-             				            var bBox = child.geometry.boundingBox;
-             				            var disx = -(bBox.min.x + bBox.max.x)/2;
-             				            var disy = -(bBox.min.y + bBox.max.y)/2;
-             				            var disz = -(bBox.min.z + bBox.max.z)/2;
-             				            child.geometry.applyMatrix( new THREE.Matrix4().makeTranslation( disx, disy, disz) )
-             							child.geometry.verticesNeedUpdate = true;
-            							scale = Math.max (100/(bBox.max.x-bBox.min.x), 100/(bBox.max.y-bBox.min.y));
-            							scale = Math.max (100/(bBox.max.z-bBox.min.z), scale);
-            							
-             							if (disx_max<bBox.max.x-bBox.min.x){
-            								disx_max = bBox.max.x-bBox.min.x;
-            							}
-            							
-            							if (disy_max < bBox.max.y-bBox.min.y){
-            								disy_max = bBox.max.y-bBox.min.y;
-            							}
-            							
-            							if (disz_max <  bBox.max.z - bBox.min.z){
-            								disz_max = bBox.max.z - bBox.min.z;
-            							} 
-
-                                }
+                         if ( child instanceof THREE.Mesh ) {
+                            child.material.map = texture;
+                            child.geometry.computeBoundingBox ();
+   				            var bBox = child.geometry.boundingBox;
+   				            var disx = -(bBox.min.x + bBox.max.x)/2;
+   				            var disy = -(bBox.min.y + bBox.max.y)/2;
+   				            var disz = -(bBox.min.z + bBox.max.z)/2;
+   				            child.geometry.applyMatrix( new THREE.Matrix4().makeTranslation( disx, disy, disz) )
+   							child.geometry.verticesNeedUpdate = true;
+  							scale = Math.max (100/(bBox.max.x-bBox.min.x), 100/(bBox.max.y-bBox.min.y));
+  							scale = Math.max (100/(bBox.max.z-bBox.min.z), scale);
+  							
+   							if (disx_max<bBox.max.x-bBox.min.x){
+  								disx_max = bBox.max.x-bBox.min.x;
+  							}
+  							
+  							if (disy_max < bBox.max.y-bBox.min.y){
+  								disy_max = bBox.max.y-bBox.min.y;
+  							}
+  							
+  							if (disz_max <  bBox.max.z - bBox.min.z){
+  								disz_max = bBox.max.z - bBox.min.z;
+  							} 
+                         }
                                
 
                         } );
@@ -200,23 +223,47 @@
 						parent.setDimensions(disx_max, disy_max, disz_max);
 
                 }, onProgress, onError );
-
-			    {% endif %}	
-
-			    
-			
-				// renderer
-				renderer = new THREE.WebGLRenderer( { antialias: true, preserveDrawingBuffer: true } );
-				renderer.setSize( render_width, render_height);
-				renderer.setClearColorHex( {{background_color}}, 1 );
-				
-				container = document.getElementById("container");
-				document.body.appendChild( container );
-				container.appendChild( renderer.domElement );
-				window.addEventListener( 'resize', onWindowResize, false );
-				
-
 			}
+			
+			
+			function loadWithSTLLoader(){
+				var material = new THREE.MeshPhongMaterial( { ambient: 0x555555, color:{{color_hex}}, specular: 0x111111, shininess: 200 } );
+				var loader = new THREE.STLLoader();
+				loader.addEventListener( 'load', function ( object ) {					
+ 					var geometry = object.content;
+					var mesh = new THREE.Mesh( geometry, material );
+					mesh.position.set( 0, 0, 0 );
+					var bBox = mesh.geometry.boundingBox.clone();
+					
+					var disx = -(bBox.min.x + bBox.max.x)/2;
+		            var disy = -(bBox.min.y + bBox.max.y)/2;
+		            var disz = -(bBox.min.z + bBox.max.z)/2;
+		            mesh.geometry.applyMatrix( new THREE.Matrix4().makeTranslation( disx, disy, disz) )
+					mesh.geometry.verticesNeedUpdate = true;
+					scale = Math.max (25/(bBox.max.x-bBox.min.x), 25/(bBox.max.y-bBox.min.y));
+					scale = Math.max (25/(bBox.max.z-bBox.min.z), scale);
+					
+					if (disx_max<bBox.max.x-bBox.min.x){
+						disx_max = bBox.max.x-bBox.min.x;
+					}
+					
+					if (disy_max < bBox.max.y-bBox.min.y){
+						disy_max = bBox.max.y-bBox.min.y;
+					}
+					
+					if (disz_max <  bBox.max.z - bBox.min.z){
+						disz_max = bBox.max.z - bBox.min.z;
+					} 
+
+					mesh.scale.set(scale, scale, scale);
+					scene.add( mesh ); 
+					load_complete = 100;
+					console.log("disx_max, disy_max, disz_max="+disx_max+","+disy_max+","+disz_max);
+					parent.setDimensions(disx_max, disy_max, disz_max);
+				} );
+				loader.load( '/medias/upload/{{project.id}}/original_models/{{project.threedmodel}}' );
+			}
+			
 
 			function onWindowResize() {
 				camera.aspect = window.innerWidth / window.innerHeight;

@@ -285,28 +285,36 @@ def project_3dview(request, project_id):
     texture_img = request.GET.get("color", "")
     if texture_img == "null":
         texture_img = ""
+    color_hex = utils.getColorHex(texture_img.split("_")[0])
+    
     try:
         background_color = int(request.GET.get("background"))
     except:
         background_color = 200;
     
-    print texture_img, background_color
+    print texture_img, background_color, color_hex, texture_img.split("_")[0]
     background_color_hex = '0x'+''.join(map(chr, (background_color, background_color, background_color))).encode('hex')
-    if texture_img == "" and project.texture != "":
-        loader = "OBJMTLLoader"
-    else:
-        loader = "OBJLoader"
+    if project.threedmodel.endswith("obj"):
+        if texture_img == "" and project.texture != "":
+            loader_config = "OBJMTLLoader"
+        else:
+            loader_config = "OBJLoader"
+    elif project.threedmodel.endswith("stl"):
+        loader_config = "STLLoader"
     
     return render_internal(request, 'ndmodel/project_3dview.html', 
-                           {'project':project, 'texture_url':texture_img, 
-                            "loader":loader, "background_color":background_color_hex})
+                           {'project':project, 
+                            'texture_url':texture_img, 
+                            "loader_config":loader_config, 
+                            "background_color":background_color_hex,
+                            "color_hex":color_hex})
 
 def project_detail(request, project_id):
     project = get_object_or_404(ProjectProfile, pk=project_id)
     owner_uf = UserProfile.objects.get(user=project.user)
     owner_other_projects = list((ProjectProfile.objects.filter(user = project.user.id, status = utils.ProjectStatus.success).exclude(id=project_id))[:4])   
-    default_material = "Plastic"
-    default_color = "White"
+    default_material = "plastic"
+    default_color = "white"
     default_color_url = "white_plastic.png"
     project_images = ProjectImage.objects.filter(project=project)
     return render_internal(request, 'ndmodel/project_detail.html', 
@@ -320,8 +328,8 @@ def project_detail(request, project_id):
 @transaction.atomic
 def getprice(request):
    priceunit = PriceUnit.objects.all()
-   color = request.GET.get("color", "").strip()
-   material = request.GET.get("material", "").strip()
+   color = request.GET.get("color", "").strip().lower()
+   material = request.GET.get("material", "").strip().lower()
    x = request.GET.get("x", "").strip()
    y = request.GET.get("y", "").strip()
    z = request.GET.get("z", "").strip()

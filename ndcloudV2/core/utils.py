@@ -12,23 +12,40 @@ class OrderStatus(Enum):
     fail = 2
     
 class Material(Enum):
-    plastic = "Plastic"
-    resin = "Resin"
-    alumide = "Alumide"
-    multicolor = "Multicolor"
-    ceramic = "Ceramic"
+    plastic = "plastic"
+    resin = "resin"
+    alumide = "alumide"
+    multicolor = "multicolor"
+    ceramic = "ceramic"
     
 class SizeUnit(Enum):
     cm = "cm"
     mm = "mm"
     
 class Color(Enum):
-    white = "White"
-    red = "Red"
-    black = "Black"
-    blue = "Blue"
-    green = "Green"
-    yellow = "Yellow" 
+    white = "white"
+    red = "red"
+    black = "black"
+    blue = "blue"
+    green = "green"
+    yellow = "yellow" 
+    
+
+def getColorHex(color):
+    print "utils:", color, Color.white
+    if color == Color.white:
+        return "0xFFFFFF"
+    elif color == Color.black:
+        return "0x000000"
+    elif color == Color.red:
+        return "0xFF0000"
+    elif color == Color.blue:
+        return "0x0000FF"
+    elif color == Color.green:
+        return "0x00FF00"
+    elif color == Color.yellow:
+        return "0xFFFF00"
+        
     
     
     

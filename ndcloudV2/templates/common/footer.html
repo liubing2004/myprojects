@@ -21,7 +21,7 @@
       validatorFunction : function(value, $el, config, language, $form) {
     	  var extension = value.replace(/^.*\./, '');
     	  console.log("extension:"+extension);
-    	  if (extension == "obj" || extension == "zip"){
+    	  if (extension == "obj" || extension == "zip" || extension == "stl"){
     		  return true;
     	  }
           return false;
