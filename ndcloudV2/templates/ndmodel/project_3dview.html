@@ -28,8 +28,8 @@
 	<body>		
 	<div id="container">
 	</div>
-	<div id="progress">
-	loading...
+	<div id="progress" style="margin-left:10px">
+	<p> Loading...</p>
 	</div>
 	<script>
 
@@ -89,6 +89,7 @@
 						var percentComplete = xhr.loaded / xhr.total * 100;
 						console.log( Math.round(percentComplete, 2) + '% downloaded' );
 						load_complete = Math.round(percentComplete, 2);
+						console.log(load_complete);
 					}
 				};
 
@@ -162,7 +163,7 @@
 
 				  object.scale.set(scale, scale, scale);
 				  scene.add(object);
-				  load_complete = 100;
+				  //load_complete = 100;
 				  console.log("disx_max, disy_max, disz_max="+disx_max+","+disy_max+","+disz_max);
 				  parent.setDimensions(disx_max, disy_max, disz_max);
 				  
@@ -218,7 +219,7 @@
 
                         object.scale.set(scale, scale, scale);
                         scene.add( object );
-                        load_complete = 100;
+                        //load_complete = 100;
 						console.log("disx_max, disy_max, disz_max="+disx_max+","+disy_max+","+disz_max);
 						parent.setDimensions(disx_max, disy_max, disz_max);
 
@@ -231,6 +232,10 @@
 				var loader = new THREE.STLLoader();
 				loader.addEventListener( 'load', function ( object ) {					
  					var geometry = object.content;
+ 					if (geometry.hasColors) {
+ 						console.log("This stl has color...");
+						material = new THREE.MeshPhongMaterial({ opacity: geometry.alpha, vertexColors: THREE.VertexColors });
+					}
 					var mesh = new THREE.Mesh( geometry, material );
 					mesh.position.set( 0, 0, 0 );
 					console.log("geometry:"+mesh.geometry.boundingBox);
@@ -282,9 +287,15 @@
 				controls.update();
 				camera.lookAt( scene.position );
 				renderer.render( scene, camera );
+				
 				if (load_complete>=100){
 					document.getElementById('progress').style.display = 'none';
+				}else{
+					document.getElementById('progress').style.display = 'block';
+					document.getElementById('progress').innerHTML = "<p>Loading "+load_complete+"% ...</p>"
+					console.log("load complete: "+load_complete);
 				}
+				
 			}
 
 		</script>

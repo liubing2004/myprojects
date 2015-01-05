@@ -34,7 +34,7 @@
 		              		value="{{uf.name}}" 
 		              		class="form-control" data-validation="length" 
 		        			data-validation-length="min4" 
-		        			data-validation-error-msg="You did not enter a valid name." required>
+		        			data-validation-error-msg="User name must have at least 4 characters." required>
 		            </div>
 		          </div>
 
@@ -111,7 +111,7 @@
 		                        <td></td>
 		                        <td class="col-sm-1 col-md-1 text-center"><strong>${{cartItem.getPrice}}</strong></td>
 		                        <td class="col-sm-1 col-md-2 pull-right">
-		                        	<a type="button" class="btn btn-success" href="/projectdetail/{{cartItem.project.id}}">Order</a>
+		                        	<a type="button" class="btn btn-success" href="/projectdetail/{{cartItem.project.id}}">ReOrder</a>
                         		</td>
 		                    </tr>
 		                 {% endfor %}        
