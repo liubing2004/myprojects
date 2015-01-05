@@ -212,13 +212,16 @@ def upload_project(request):
 @transaction.atomic  
 def project_update(request, project_id):
     project = get_object_or_404(ProjectProfile, pk=project_id)
-    default_color_url = "white_plastic.png"
+    if project.threedmodel.endswith("obj") and project.texture!=None and project.texture.strip()!="" : 
+        default_color_url = ""
+    else:
+        default_color_url = "white_plastic.png"
     if request.method == 'GET':
         project_images = ProjectImage.objects.filter(project=project)
         return render_internal(request, 'ndmodel/project_update.html', 
                            {"project":project,
-                            'default_color_url':default_color_url,
-                            'project_images':project_images})
+                            'project_images':project_images,
+                            'default_color_url':default_color_url})
     
     action = request.POST.get('action')
     
@@ -306,10 +309,17 @@ def project_3dview(request, project_id):
 def project_detail(request, project_id):
     project = get_object_or_404(ProjectProfile, pk=project_id)
     owner_uf = UserProfile.objects.get(user=project.user)
-    owner_other_projects = list((ProjectProfile.objects.filter(user = project.user.id, status = utils.ProjectStatus.success).exclude(id=project_id))[:4])   
-    default_material = "plastic"
-    default_color = "white"
-    default_color_url = "white_plastic.png"
+    owner_other_projects = list((ProjectProfile.objects.filter(user = project.user.id, status = utils.ProjectStatus.success).exclude(id=project_id))[:4])  
+    if project.threedmodel.endswith("obj") and project.texture!=None and project.texture.strip()!="" : 
+        default_material = "multicolor"
+        default_finish = "raw"
+        default_color = ""
+        default_color_url = ""
+    else:
+        default_material = "plastic"
+        default_color = "white"
+        default_color_url = "white_plastic.png"
+        default_finish = ""
     project_images = ProjectImage.objects.filter(project=project)
     return render_internal(request, 'ndmodel/project_detail.html', 
                            {'project':project, 'owner_uf':owner_uf,
@@ -317,6 +327,7 @@ def project_detail(request, project_id):
                             'default_material':default_material,
                             'default_color':default_color,
                             'default_color_url':default_color_url,
+                            'default_finish':default_finish,
                             'project_images':project_images
                             })    
 @transaction.atomic
