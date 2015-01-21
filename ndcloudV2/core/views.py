@@ -16,6 +16,7 @@ import utils, shutil
 from paypal.standard.forms import PayPalPaymentsForm
 from paypal.standard.conf import POSTBACK_ENDPOINT, SANDBOX_POSTBACK_ENDPOINT
 from django.core.urlresolvers import reverse
+from django.views.decorators.csrf import csrf_exempt
 
 # Create your views here.
 def index(request):
@@ -208,6 +209,13 @@ def upload_project(request):
     return redirect("/project/update/%d" %(project_profile.id))
 
 
+@csrf_exempt
+def upload_picture(request):
+    print "upload pictures....." 
+    print "upload files: ", request.FILES
+    return HttpResponse('Hello world')
+
+
 @login_required(login_url='/login')  
 @transaction.atomic  
 def project_update(request, project_id):
@@ -332,6 +340,7 @@ def project_detail(request, project_id):
                             })    
 @transaction.atomic
 def getprice(request):
+   print request
    priceunit = PriceUnit.objects.all()
    color = request.GET.get("color", "").strip().lower()
    material = request.GET.get("material", "").strip().lower()
