@@ -1,0 +1,11 @@
+{
+  "name": "devdactic-auth",
+  "app_id": "",
+  "defaultBrowser": true,
+  "proxies": [
+    {
+      "path": "/mobile",
+      "proxyUrl": "http://localhost/mobile"
+    }
+  ]
+}
