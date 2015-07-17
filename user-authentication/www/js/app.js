@@ -45,7 +45,8 @@ angular.module('starter', ['ionic', 'ngMockE2E'])
     url: 'main/public',
     views: {
         'public-tab': {
-          templateUrl: 'templates/public.html'
+          templateUrl: 'templates/public.html',
+	  controller: 'PublicCtrl'
         }
     }
   })
@@ -53,7 +54,7 @@ angular.module('starter', ['ionic', 'ngMockE2E'])
     url: 'main/admin',
     views: {
         'admin-tab': {
-          templateUrl: 'templates/admin.html'
+          templateUrl: 'templates/admin.html',
         }
     },
     data: {
@@ -80,6 +81,7 @@ angular.module('starter', ['ionic', 'ngMockE2E'])
 
   $httpBackend.whenGET(/templates\/\w+.*/).passThrough();
   $httpBackend.whenGET(/.*/).passThrough();
+  $httpBackend.whenPOST(/.*/).passThrough();
 })
 
 .run(function ($rootScope, $state, AuthService, AUTH_EVENTS) {

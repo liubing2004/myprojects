@@ -27,6 +27,65 @@ angular.module('starter')
   };
 })
 
+.controller('PublicCtrl', function($scope, $state, $http, AuthService) {
+  $scope.username = AuthService.username();
+
+  $scope.addItem = function(data) {
+    console.log("add item", data.shoplist);
+    $http.get('http://localhost:8100/mobile/additem', { params: { "userId": 2, "shopListName": data.shoplist, "store": data.store, "itemName": data.itemname } })
+            .success(function(response, status, headers, config) {
+		console.log("success", response["status"]);
+		$state.go('main.dash', {}, {reload: true});
+            }).error(function(response, status, headers, config) {               
+                console.log("fail");
+            });
+   };
+})
+
+.controller('MylistCtrl', function($scope, $http, $state) {
+ $scope.shouldShowDelete = false;
+ $scope.shouldShowReorder = false;
+ $scope.listCanSwipe = true;
+ $http.get('http://localhost:8100/mobile/shoplist', { params: { "userId": 2} })
+            .success(function(response, status, headers, config) {
+                console.log("success", response["status"]);
+                $scope.items = response;
+            }).error(function(response, status, headers, config) {               
+                console.log("fail");
+            });
+
+$scope.delete = function(item) {
+      alert('Delete item: ');
+    };
+$scope.goDetail = function(item){
+       $state.go('main.dash', {}, {reload: true});	
+    };
+})
+
+
+.controller('ShopitemCtrl', function($scope) {
+ $scope.shouldShowDelete = false;
+ $scope.shouldShowReorder = false;
+ $scope.listCanSwipe = true;
+ $scope.items = [
+    {title: "Egg"},
+    {title: "Apple"},
+    {title: "Oil"},
+    {title: "Orange"},
+    {title: "Item 5"},
+  ];
+$scope.delete = function(item) {
+      alert('Delete item: ');
+    };
+$scope.goDetail = function(item){
+       $state.go('main.dash', {}, {reload: true});
+    };
+
+
+})
+
+
+
 .controller('LoginCtrl', function($scope, $state, $ionicPopup, AuthService) {
   $scope.data = {};
 
