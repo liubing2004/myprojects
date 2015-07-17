@@ -35,7 +35,7 @@ angular.module('starter')
     $http.get('http://localhost:8100/mobile/additem', { params: { "userId": 2, "shopListName": data.shoplist, "store": data.store, "itemName": data.itemname } })
             .success(function(response, status, headers, config) {
 		console.log("success", response["status"]);
-		$state.go('main.dash', {}, {reload: true});
+		$state.go('main.shopitem', {shoplist:data.shoplist}, {reload: true});
             }).error(function(response, status, headers, config) {               
                 console.log("fail");
             });
@@ -48,7 +48,7 @@ angular.module('starter')
  $scope.listCanSwipe = true;
  $http.get('http://localhost:8100/mobile/shoplist', { params: { "userId": 2} })
             .success(function(response, status, headers, config) {
-                console.log("success", response["status"]);
+                console.log("success");
                 $scope.items = response;
             }).error(function(response, status, headers, config) {               
                 console.log("fail");
@@ -58,32 +58,10 @@ $scope.delete = function(item) {
       alert('Delete item: ');
     };
 $scope.goDetail = function(item){
-       $state.go('main.dash', {}, {reload: true});	
+       //$state.go('main.dash', {}, {reload: true});	
+      $state.go('main.shopitem', {shoplist:item.title}, {reload: true});
     };
 })
-
-
-.controller('ShopitemCtrl', function($scope) {
- $scope.shouldShowDelete = false;
- $scope.shouldShowReorder = false;
- $scope.listCanSwipe = true;
- $scope.items = [
-    {title: "Egg"},
-    {title: "Apple"},
-    {title: "Oil"},
-    {title: "Orange"},
-    {title: "Item 5"},
-  ];
-$scope.delete = function(item) {
-      alert('Delete item: ');
-    };
-$scope.goDetail = function(item){
-       $state.go('main.dash', {}, {reload: true});
-    };
-
-
-})
-
 
 
 .controller('LoginCtrl', function($scope, $state, $ionicPopup, AuthService) {
@@ -102,35 +80,35 @@ $scope.goDetail = function(item){
   };
 })
 
+.controller('ShopitemCtrl', function($scope, $state, $http, $ionicPopup, $stateParams, AuthService) {
+
+ $scope.shouldShowDelete = false;
+ $scope.shouldShowReorder = false;
+ $scope.listCanSwipe = true;
+
+console.log("parameters: ", $stateParams["shoplist"]);
+ $http.get('http://localhost:8100/mobile/shopitem', { params: { "userId": 2, "shoplistName":$stateParams["shoplist"]} })
+            .success(function(response, status, headers, config) {
+                console.log("successi!!!1");
+                $scope.items = response;
+            }).error(function(response, status, headers, config) {
+                console.log("fail");
+            });
+
+$scope.shoplist_name = $stateParams["shoplist"];
+$scope.delete = function(item) {
+      alert('Delete item: ');
+    };
+$scope.goDetail = function(item){
+       $state.go('main.shopitem', {shoplist:"text"}, {reload: true});
+    };
+})
+
 .controller('DashCtrl', function($scope, $state, $http, $ionicPopup, AuthService) {
   $scope.logout = function() {
     AuthService.logout();
     $state.go('login');
   };
 
-  $scope.performValidRequest = function() {
-    //$http.get('http://localhost:8100/valid').then(
-    $http.get('http://localhost/login').then(
-      function(result) {
-        $scope.response = result;
-      });
-  };
 
-  $scope.performUnauthorizedRequest = function() {
-    $http.get('http://localhost:8100/notauthorized').then(
-      function(result) {
-        // No result here..
-      }, function(err) {
-        $scope.response = err;
-      });
-  };
-
-  $scope.performInvalidRequest = function() {
-    $http.get('http://localhost:8100/notauthenticated').then(
-      function(result) {
-        // No result here..
-      }, function(err) {
-        $scope.response = err;
-      });
-  };
 });

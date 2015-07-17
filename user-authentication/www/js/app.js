@@ -41,6 +41,16 @@ angular.module('starter', ['ionic', 'ngMockE2E'])
         }
     }
   })
+  .state('main.shopitem', {
+    url: 'main/shopitem/:shoplist',
+    views: {
+        'dash-tab': {
+          templateUrl: 'templates/shopitem.html',
+          controller: 'ShopitemCtrl'
+        }
+    }
+  })
+
   .state('main.public', {
     url: 'main/public',
     views: {
@@ -61,22 +71,10 @@ angular.module('starter', ['ionic', 'ngMockE2E'])
       authorizedRoles: [USER_ROLES.admin]
     }
   });
-  $urlRouterProvider.otherwise('/main/dash');
+  $urlRouterProvider.otherwise('/main/public');
 })
 
 .run(function($httpBackend){
-  $httpBackend.whenGET('http://localhost:8100/valid')
-        .respond({message: 'This is my valid response! hahaha'});
-  $httpBackend.whenGET('http://localhost:8100/notauthenticated')
-        .respond(401, {message: "Not Authenticated"});
-  $httpBackend.whenGET('http://localhost:8100/notauthorized')
-        .respond(403, {message: "Not Authorized"});
-
-  $httpBackend.whenGET('http://localhost/login')
-  	.respond({message: 'This is my valid login response!'});
-  
-  //$httpBackend.whenPOST('http://localhost/login/')
-  //      .respond({message: 'This is my valid login response!'});
 
 
   $httpBackend.whenGET(/templates\/\w+.*/).passThrough();
