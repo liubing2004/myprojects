@@ -69,7 +69,7 @@ $scope.goDetail = function(item){
 
   $scope.login = function(data) {
     AuthService.login(data.username, data.password).then(function(authenticated) {
-      $state.go('main.dash', {}, {reload: true});
+      $state.go('main.public', {}, {reload: true});
       $scope.setCurrentUsername(data.username);
     }, function(err) {
       var alertPopup = $ionicPopup.alert({
@@ -97,7 +97,14 @@ console.log("parameters: ", $stateParams["shoplist"]);
 
 $scope.shoplist_name = $stateParams["shoplist"];
 $scope.delete = function(item) {
-      alert('Delete item: ');
+      $http.get('http://localhost:8100/mobile/shopitem/delete', { params: { "userId": 2, "shoplistName":$stateParams["shoplist"], "shopitemName": item.name} })
+            .success(function(response, status, headers, config) {
+                console.log("success!");
+                $state.go('main.shopitem', {shoplist:$stateParams["shoplist"]}, {reload: true});
+            }).error(function(response, status, headers, config) {
+                console.log("fail");
+            });
+
     };
 $scope.goDetail = function(item){
        $state.go('main.shopitem', {shoplist:"text"}, {reload: true});
