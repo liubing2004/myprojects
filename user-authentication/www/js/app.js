@@ -32,44 +32,39 @@ angular.module('starter', ['ionic', 'ngMockE2E'])
     abstract: true,
     templateUrl: 'templates/main.html'
   })
-  .state('main.dash', {
-    url: 'main/dash',
+ 
+ .state('main.public', {
+    url: 'main/public',
     views: {
-        'dash-tab': {
-          templateUrl: 'templates/dashboard.html',
-          controller: 'DashCtrl'
+        'public-tab': {
+          templateUrl: 'templates/public.html',
+          controller: 'PublicCtrl'
         }
     }
   })
-  .state('main.shopitem', {
+
+ 
+ .state('main.shopitem', {
     url: 'main/shopitem/:shoplist',
     views: {
-        'dash-tab': {
+        'shopitem-tab': {
           templateUrl: 'templates/shopitem.html',
           controller: 'ShopitemCtrl'
         }
     }
   })
 
-  .state('main.public', {
-    url: 'main/public',
-    views: {
-        'public-tab': {
-          templateUrl: 'templates/public.html',
-	  controller: 'PublicCtrl'
-        }
-    }
-  })
   .state('main.admin', {
     url: 'main/admin',
     views: {
         'admin-tab': {
           templateUrl: 'templates/admin.html',
+          controller:'MylistCtrl'
         }
     },
-    data: {
-      authorizedRoles: [USER_ROLES.admin]
-    }
+    //data: {
+    //  authorizedRoles: [USER_ROLES.admin]
+   // }
   });
   $urlRouterProvider.otherwise('/main/public');
 })

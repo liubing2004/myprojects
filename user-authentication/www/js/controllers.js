@@ -1,8 +1,5 @@
 angular.module('starter')
 
-// .controller('AppCtrl', function() {})
-// .controller('LoginCtrl', function() {})
-// .controller('DashCtrl', function() {});
 .controller('AppCtrl', function($scope, $state, $ionicPopup, AuthService, AUTH_EVENTS) {
   $scope.username = AuthService.username();
 
@@ -28,6 +25,11 @@ angular.module('starter')
 })
 
 .controller('PublicCtrl', function($scope, $state, $http, AuthService) {
+  $scope.logout = function() {
+    AuthService.logout();
+    $state.go('login');
+  };
+
   $scope.username = AuthService.username();
 
   $scope.addItem = function(data) {
@@ -109,13 +111,13 @@ $scope.delete = function(item) {
 $scope.goDetail = function(item){
        $state.go('main.shopitem', {shoplist:"text"}, {reload: true});
     };
-})
-
-.controller('DashCtrl', function($scope, $state, $http, $ionicPopup, AuthService) {
-  $scope.logout = function() {
-    AuthService.logout();
-    $state.go('login');
-  };
-
-
 });
+
+//.controller('DashCtrl', function($scope, $state, $http, $ionicPopup, AuthService) {
+//  $scope.logout = function() {
+//    AuthService.logout();
+//    $state.go('login');
+//  };
+
+
+//});

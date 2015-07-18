@@ -1,4 +1,8 @@
 <ion-view view-title="Create Shopping Item" name="dashboard-view">
+  <ion-nav-buttons side="right">
+    <button class="button icon-left ion-log-out button-stable" ng-click="logout()">Logout</button>
+  </ion-nav-buttons>
+
   <ion-content class="padding">
       <form ng-submit="addItem(data)">
       <div class="list">
