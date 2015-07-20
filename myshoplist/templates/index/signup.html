@@ -1,0 +1,40 @@
+{% include "common/header.html" %}
+
+{% include "common/error_messages.html" %}
+<form class="form-signin" role="form" name='signupForm' action="{% url 'signup' %}" method="post">
+{% csrf_token %}
+        <h2 class="form-signin-heading">Please signup</h2>
+        <div class="form-group">       	
+        	<label for="inputEmail" class="sr-only">Email address</label>
+        	<input type="email" name="email" value="" id="inputEmail" class="form-control" placeholder="Email address" 
+        		data-validation="email" required autofocus>
+        </div>
+        <div class="form-group">
+        	<label for="inputPassword" class="sr-only">Password</label>
+        	<input type="password" value="" id="inputPassword" class="form-control" placeholder="Password" 
+        		name="pass_confirmation" data-validation="strength" data-validation-strength="2" 
+        		required>
+        </div>
+        <div class="form-group">
+        	<label for="inputPassword" class="sr-only">Password confirmation</label>
+        	<input type="password" value="" id="inputPasswordConfirm" class="form-control" 
+        		placeholder="Password confirmation" name="pass" data-validation="confirmation" 
+        		data-validation-error-msg="The two password fields didn't match." required>
+        </div>
+        <div class="form-group">
+        	<label for="inputUserName" class="sr-only">User Name</label>
+        	<input type="text" name="name" value="" id="inputName" class="form-control" placeholder="User name" data-validation="length" 
+        		data-validation-length="min4" data-validation-error-msg="User name must have at least 4 characters." required autofocus>
+        </div>
+        <div class="checkbox">
+          <label>
+            <input type="checkbox" value="remember-me"> Remember me
+          </label>
+        </div>
+        <input type="hidden" name="next" value="{{next}}"/>
+        <button class="btn btn-lg btn-primary btn-block" type="submit">Register</button>
+        <div class="form-signin-extra" >Have an Account? <a href="/login">Login</a></div>         
+</form>
+
+
+{% include "common/footer.html" %}

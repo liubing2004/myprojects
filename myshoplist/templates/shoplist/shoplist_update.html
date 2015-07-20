@@ -1,0 +1,20 @@
+{% include "common/header.html" %}
+
+{% include "common/error_messages.html" %}
+
+
+<form class="form-signin" role="form" name='shoplistUpdateForm' action="{% url 'shoplist_update' shoplist.id %}" method="post">
+{% csrf_token %}
+        <h2 class="form-signin-heading">Update Your Shoplist</h2>
+        <div class="form-group">
+        	<label for="inputName" class="sr-only">Shoplist Name</label>
+        	<input type="text" name="name" value="{{shoplist.name}}" id="inputName" class="form-control" placeholder="" data-validation="length" 
+        		data-validation-length="min4" data-validation-error-msg="Shoplist name must have at least 4 characters." required autofocus>
+        </div>
+        <input type="hidden" name="next" value="{{next}}"/>
+        <button class="btn btn-lg btn-primary btn-block" type="submit">Update</button>
+</form>
+
+
+
+{% include "common/footer.html" %}

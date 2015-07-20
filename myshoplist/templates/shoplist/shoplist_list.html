@@ -1,0 +1,29 @@
+{% include "common/header.html" %}
+{% include "common/error_messages.html" %}
+
+<div class="row">
+        <div class="col-sm-12 col-md-10 col-md-offset-1" >
+            <table class="table table-hover" id="shoplisttable">
+                <thead>
+                    <tr>
+                        <th>Id</th>
+                        <th>Name</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                {% for shoplist in shoplist_list %}
+                    <tr>
+                        <td class="col-sm-4 col-md-4">{{shoplist.id}}</td>
+                        <td class="col-sm-4 col-md-4" >{{shoplist.name}}</td>
+                        <td class="col-sm-4 col-md-2"><a href="{% url 'shoplist_update' shoplist.id %}" class="btn btn-info" role="button">Update</a></td>
+                    </tr>
+                 {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+
+
+{% include "common/footer.html" %}
