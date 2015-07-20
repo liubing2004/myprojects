@@ -32,54 +32,52 @@ angular.module('starter', ['ionic', 'ngMockE2E'])
     abstract: true,
     templateUrl: 'templates/main.html'
   })
-  .state('main.dash', {
-    url: 'main/dash',
-    views: {
-        'dash-tab': {
-          templateUrl: 'templates/dashboard.html',
-          controller: 'DashCtrl'
-        }
-    }
-  })
-  .state('main.public', {
+ 
+ .state('main.public', {
     url: 'main/public',
+    cache: false,
     views: {
         'public-tab': {
-          templateUrl: 'templates/public.html'
+          templateUrl: 'templates/public.html',
+          controller: 'PublicCtrl'
         }
     }
   })
+
+ 
+ .state('main.shopitem', {
+    url: 'main/shopitem',
+    cache: false,
+    views: {
+        'shopitem-tab': {
+          templateUrl: 'templates/shopitem.html',
+          controller: 'ShopitemCtrl'
+        }
+    }
+  })
+
   .state('main.admin', {
     url: 'main/admin',
+     cache: false,
     views: {
         'admin-tab': {
-          templateUrl: 'templates/admin.html'
+          templateUrl: 'templates/admin.html',
+          controller:'MylistCtrl'
         }
     },
-    data: {
-      authorizedRoles: [USER_ROLES.admin]
-    }
+    //data: {
+    //  authorizedRoles: [USER_ROLES.admin]
+   // }
   });
-  $urlRouterProvider.otherwise('/main/dash');
+  $urlRouterProvider.otherwise('/main/public');
 })
 
 .run(function($httpBackend){
-  $httpBackend.whenGET('http://localhost:8100/valid')
-        .respond({message: 'This is my valid response! hahaha'});
-  $httpBackend.whenGET('http://localhost:8100/notauthenticated')
-        .respond(401, {message: "Not Authenticated"});
-  $httpBackend.whenGET('http://localhost:8100/notauthorized')
-        .respond(403, {message: "Not Authorized"});
-
-  $httpBackend.whenGET('http://localhost/login')
-  	.respond({message: 'This is my valid login response!'});
-  
-  //$httpBackend.whenPOST('http://localhost/login/')
-  //      .respond({message: 'This is my valid login response!'});
 
 
   $httpBackend.whenGET(/templates\/\w+.*/).passThrough();
   $httpBackend.whenGET(/.*/).passThrough();
+  $httpBackend.whenPOST(/.*/).passThrough();
 })
 
 .run(function ($rootScope, $state, AuthService, AUTH_EVENTS) {

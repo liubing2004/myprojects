@@ -1,20 +1,22 @@
-<ion-view view-title="My Shop List" name="dashboard-view" ng-controller="MylistCtrl">
-     <div class="buttons">
-     <ion-content class="padding">
-
-     <ion-list 
+<ion-view view-title="By Store" name="dashboard-view" ng-controller="MylistCtrl">
+<ion-content class="padding">
+ <label class="item item-input">
+  <i class="icon ion-search placeholder-icon"></i>
+  <input type="search" placeholder="Search Store" ng-model="filters.store">
+</label>
+  <ion-list 
           show-delete="shouldShowDelete"
           show-reorder="shouldShowReorder"
           can-swipe="listCanSwipe">
-  <ion-item ng-repeat="item in items">
-	<h2 ng-click="goDetail(item)" style="cursor: pointer">{{item.title}}</h2>
+  <ion-item ng-repeat="item in items | filter:filters">
+     <h2>{{item.name}}<span class="item-note">{{item.store}} - {{item.shoplist}}</span></h2>
     <ion-option-button class="button-assertive"
                        ng-click="delete(item)">
       Delete
     </ion-option-button>
+
   </ion-item>
-</ion-list> 
-
-    </ion-content>
-
+  </ion-list>
+  </ion-content>
 </ion-view>
+

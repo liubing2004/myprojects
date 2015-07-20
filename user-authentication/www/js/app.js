@@ -35,6 +35,7 @@ angular.module('starter', ['ionic', 'ngMockE2E'])
  
  .state('main.public', {
     url: 'main/public',
+    cache: false,
     views: {
         'public-tab': {
           templateUrl: 'templates/public.html',
@@ -45,7 +46,8 @@ angular.module('starter', ['ionic', 'ngMockE2E'])
 
  
  .state('main.shopitem', {
-    url: 'main/shopitem/:shoplist',
+    url: 'main/shopitem',
+    cache: false,
     views: {
         'shopitem-tab': {
           templateUrl: 'templates/shopitem.html',
@@ -56,6 +58,7 @@ angular.module('starter', ['ionic', 'ngMockE2E'])
 
   .state('main.admin', {
     url: 'main/admin',
+     cache: false,
     views: {
         'admin-tab': {
           templateUrl: 'templates/admin.html',

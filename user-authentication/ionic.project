@@ -1,11 +1,11 @@
 {
-  "name": "devdactic-auth",
+  "name": "MyShopList",
   "app_id": "",
   "defaultBrowser": true,
   "proxies": [
     {
       "path": "/mobile",
-      "proxyUrl": "http://localhost/mobile"
+      "proxyUrl": "http://52.8.58.231/mobile"
     }
   ]
 }

@@ -1,8 +1,5 @@
 angular.module('starter')
 
-// .controller('AppCtrl', function() {})
-// .controller('LoginCtrl', function() {})
-// .controller('DashCtrl', function() {});
 .controller('AppCtrl', function($scope, $state, $ionicPopup, AuthService, AUTH_EVENTS) {
   $scope.username = AuthService.username();
 
@@ -27,12 +24,61 @@ angular.module('starter')
   };
 })
 
+.controller('PublicCtrl', function($scope, $state, $http, AuthService) {
+  $scope.logout = function() {
+    AuthService.logout();
+    $state.go('login');
+  };
+
+  $scope.username = AuthService.username();
+
+  $scope.addItem = function(data) {
+    console.log("add item", data.shoplist);
+    $http.get('http://52.8.58.231/mobile/additem', { params: { "userId": 2, "shopListName": data.shoplist, "store": data.store, "itemName": data.itemname } })
+            .success(function(response, status, headers, config) {
+		console.log("success", response["status"]);
+		$state.go('main.shopitem', {}, {reload: true});
+            }).error(function(response, status, headers, config) {               
+                console.log("fail");
+            });
+   };
+})
+
+.controller('MylistCtrl', function($scope, $http, $state) {
+ $scope.shouldShowDelete = false;
+ $scope.shouldShowReorder = false;
+ $scope.listCanSwipe = true;
+ $http.get('http://52.8.58.231/mobile/shopitem', { params: { "userId": 2} })
+            .success(function(response, status, headers, config) {
+                console.log("success");
+                $scope.items = response;
+            }).error(function(response, status, headers, config) {               
+                console.log("fail");
+            });
+
+
+$scope.delete = function(item) {
+      $http.get('http://52.8.58.231/mobile/shopitem/delete', { params: { "userId": 2, "shopitemName": item.name} })
+            .success(function(response, status, headers, config) {
+                console.log("success!");
+                $state.go('main.shopitem', {}, {reload: true});
+            }).error(function(response, status, headers, config) {
+                console.log("fail");
+            });
+
+    };
+
+
+
+})
+
+
 .controller('LoginCtrl', function($scope, $state, $ionicPopup, AuthService) {
   $scope.data = {};
 
   $scope.login = function(data) {
     AuthService.login(data.username, data.password).then(function(authenticated) {
-      $state.go('main.dash', {}, {reload: true});
+      $state.go('main.public', {}, {reload: true});
       $scope.setCurrentUsername(data.username);
     }, function(err) {
       var alertPopup = $ionicPopup.alert({
@@ -43,35 +89,33 @@ angular.module('starter')
   };
 })
 
-.controller('DashCtrl', function($scope, $state, $http, $ionicPopup, AuthService) {
-  $scope.logout = function() {
-    AuthService.logout();
-    $state.go('login');
-  };
+.controller('ShopitemCtrl', function($scope, $state, $http, $ionicPopup, $stateParams, AuthService) {
 
-  $scope.performValidRequest = function() {
-    //$http.get('http://localhost:8100/valid').then(
-    $http.get('http://localhost/login').then(
-      function(result) {
-        $scope.response = result;
-      });
-  };
+ $scope.shouldShowDelete = false;
+ $scope.shouldShowReorder = false;
+ $scope.listCanSwipe = true;
 
-  $scope.performUnauthorizedRequest = function() {
-    $http.get('http://localhost:8100/notauthorized').then(
-      function(result) {
-        // No result here..
-      }, function(err) {
-        $scope.response = err;
-      });
-  };
+ $http.get('http://52.8.58.231/mobile/shopitem', { params: { "userId": 2} })
+            .success(function(response, status, headers, config) {
+                console.log("successi!!!1");
+                $scope.items = response;
+            }).error(function(response, status, headers, config) {
+                console.log("fail");
+            });
 
-  $scope.performInvalidRequest = function() {
-    $http.get('http://localhost:8100/notauthenticated').then(
-      function(result) {
-        // No result here..
-      }, function(err) {
-        $scope.response = err;
-      });
-  };
+$scope.shoplist_name = $stateParams["shoplist"];
+$scope.delete = function(item) {
+      $http.get('http://52.8.58.231/mobile/shopitem/delete', { params: { "userId": 2, "shopitemName": item.name} })
+            .success(function(response, status, headers, config) {
+                console.log("success!");
+                $state.go('main.shopitem', {}, {reload: true});
+            }).error(function(response, status, headers, config) {
+                console.log("fail");
+            });
+
+    };
+$scope.goDetail = function(item){
+       $state.go('main.shopitem', {shoplist:"text"}, {reload: true});
+    };
 });
+

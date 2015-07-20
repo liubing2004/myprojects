@@ -34,10 +34,10 @@ angular.module('starter')
 
   $scope.addItem = function(data) {
     console.log("add item", data.shoplist);
-    $http.get('http://localhost:8100/mobile/additem', { params: { "userId": 2, "shopListName": data.shoplist, "store": data.store, "itemName": data.itemname } })
+    $http.get('http://52.8.58.231/mobile/additem', { params: { "userId": 2, "shopListName": data.shoplist, "store": data.store, "itemName": data.itemname } })
             .success(function(response, status, headers, config) {
 		console.log("success", response["status"]);
-		$state.go('main.shopitem', {shoplist:data.shoplist}, {reload: true});
+		$state.go('main.shopitem', {}, {reload: true});
             }).error(function(response, status, headers, config) {               
                 console.log("fail");
             });
@@ -48,7 +48,7 @@ angular.module('starter')
  $scope.shouldShowDelete = false;
  $scope.shouldShowReorder = false;
  $scope.listCanSwipe = true;
- $http.get('http://localhost:8100/mobile/shoplist', { params: { "userId": 2} })
+ $http.get('http://52.8.58.231/mobile/shopitem', { params: { "userId": 2} })
             .success(function(response, status, headers, config) {
                 console.log("success");
                 $scope.items = response;
@@ -56,13 +56,20 @@ angular.module('starter')
                 console.log("fail");
             });
 
+
 $scope.delete = function(item) {
-      alert('Delete item: ');
+      $http.get('http://52.8.58.231/mobile/shopitem/delete', { params: { "userId": 2, "shopitemName": item.name} })
+            .success(function(response, status, headers, config) {
+                console.log("success!");
+                $state.go('main.shopitem', {}, {reload: true});
+            }).error(function(response, status, headers, config) {
+                console.log("fail");
+            });
+
     };
-$scope.goDetail = function(item){
-       //$state.go('main.dash', {}, {reload: true});	
-      $state.go('main.shopitem', {shoplist:item.title}, {reload: true});
-    };
+
+
+
 })
 
 
@@ -88,8 +95,7 @@ $scope.goDetail = function(item){
  $scope.shouldShowReorder = false;
  $scope.listCanSwipe = true;
 
-console.log("parameters: ", $stateParams["shoplist"]);
- $http.get('http://localhost:8100/mobile/shopitem', { params: { "userId": 2, "shoplistName":$stateParams["shoplist"]} })
+ $http.get('http://52.8.58.231/mobile/shopitem', { params: { "userId": 2} })
             .success(function(response, status, headers, config) {
                 console.log("successi!!!1");
                 $scope.items = response;
@@ -99,10 +105,10 @@ console.log("parameters: ", $stateParams["shoplist"]);
 
 $scope.shoplist_name = $stateParams["shoplist"];
 $scope.delete = function(item) {
-      $http.get('http://localhost:8100/mobile/shopitem/delete', { params: { "userId": 2, "shoplistName":$stateParams["shoplist"], "shopitemName": item.name} })
+      $http.get('http://52.8.58.231/mobile/shopitem/delete', { params: { "userId": 2, "shopitemName": item.name} })
             .success(function(response, status, headers, config) {
                 console.log("success!");
-                $state.go('main.shopitem', {shoplist:$stateParams["shoplist"]}, {reload: true});
+                $state.go('main.shopitem', {}, {reload: true});
             }).error(function(response, status, headers, config) {
                 console.log("fail");
             });
@@ -113,11 +119,3 @@ $scope.goDetail = function(item){
     };
 });
 
-//.controller('DashCtrl', function($scope, $state, $http, $ionicPopup, AuthService) {
-//  $scope.logout = function() {
-//    AuthService.logout();
-//    $state.go('login');
-//  };
-
-
-//});

@@ -47,9 +47,9 @@ angular.module('starter')
     return $q(function(resolve, reject) {
         // Make a request and receive your auth token from your server
         console.log('test test test');        
-	$http.get('http://localhost:8100/mobile/login', { params: { "email": name, "password": pw } }).
+	$http.get('http://52.8.58.231/mobile/login', { params: { "email": name, "password": pw } }).
 		success(function(data, status) {
-          		console.log("success:", data['status']);
+          		console.log("successi!!:", data['status']);
 			if ( data['status'] == 'true' ){
 				 storeUserCredentials(name + '.yourServerToken');
                 		resolve('Login success.');
