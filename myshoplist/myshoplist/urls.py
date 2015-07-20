@@ -22,6 +22,7 @@ urlpatterns = patterns('',
     url(r'^mobile/shopitem$', core_views.mobile_getshopitem, name='mobile_shopitem'),
     #url(r'^mobile/shoplist/delete$', core_views.mobile_deleteshoplist, name='mobile_shoplist_delete'),
     url(r'^mobile/shopitem/delete$', core_views.mobile_deleteshopitem, name='mobile_shopitem_delete'),
+    url(r'^mobile/config$', core_views.mobile_config, name='mobile_config'),
     url(r'^admin/', include(admin.site.urls)),
 )
 

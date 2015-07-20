@@ -14,11 +14,14 @@
     		<div class="input-label">
       			Store
     		</div>
-    		<select ng-model="data.store">
+		<select ng-model="data.store" ng-options="store.name for store in stores">
+  		</select>
+    		<!--<select ng-model="data.store">
+			<option ng-repeat="s in stores">{{s.name}} </option>
       			<option>Walmart</option>
       			<option selected>Costco</option>
       			<option>Safeway</option>
-    		</select>
+    		</select>-->
   	</label>
   	<label class="item item-input item-stacked-label">
     		<span class="input-label">Shoplist</span>

@@ -32,6 +32,21 @@ angular.module('starter')
 
   $scope.username = AuthService.username();
 
+$http.get('http://52.8.58.231/mobile/config', {})
+            .success(function(response, status, headers, config) {
+                console.log("success");
+                $scope.stores = response["stores"];
+            }).error(function(response, status, headers, config) {
+                console.log("fail");
+            });
+
+  
+ //$scope.stores = [
+ //  {name: "Walmart"},
+ //  {name: "Costco"},
+ //  {name: "Ranch99"}
+ //];
+
   $scope.addItem = function(data) {
     console.log("add item", data.shoplist);
     $http.get('http://52.8.58.231/mobile/additem', { params: { "userId": 2, "shopListName": data.shoplist, "store": data.store, "itemName": data.itemname } })

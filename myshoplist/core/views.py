@@ -129,6 +129,16 @@ def mobile_deleteshopitem(request):
     for shopitem in shopitems:
         ShopItem.delete(shopitem)
     return mobile_getshopitem(request)
+
+@csrf_exempt
+def mobile_config(request):
+    stores = Store.objects.all()
+    response_data = dict()
+    store_list = list()
+    for store in stores:
+        store_list.append({"name":store.name})
+    response_data["stores"] = store_list
+    return HttpResponse(json.dumps(response_data), content_type="application/json")
     
 
 def login_view(request):
