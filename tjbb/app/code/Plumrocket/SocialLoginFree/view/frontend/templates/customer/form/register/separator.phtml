@@ -1,0 +1,30 @@
+<?php
+/**
+ * Plumrocket Inc.
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the End-user License Agreement
+ * that is available through the world-wide-web at this URL:
+ * http://wiki.plumrocket.net/wiki/EULA
+ * If you are unable to obtain it through the world-wide-web, please
+ * send an email to support@plumrocket.com so we can send you a copy immediately.
+ *
+ * @package     Plumrocket_SocialLoginFree
+ * @copyright   Copyright (c) 2017 Plumrocket Inc. (http://www.plumrocket.com)
+ * @license     http://wiki.plumrocket.net/wiki/EULA  End-user License Agreement
+ */
+?>
+
+<?php $helper = $block->getDataHelper();
+if ($helper->modulePositionEnabled('register') && $helper->hasButtons()) : ?>
+<div class="pslogin-spacer pslogin-clearfix">
+    <table>
+        <tr>
+            <td><div class="pslogin-border"></div></td>
+            <td class="pslogin-bordertext w25"><?php echo __('OR'); ?></td>
+            <td><div class="pslogin-border"></div></td>
+        </tr>
+    </table>
+</div>
+<?php endif ?>
