@@ -1,0 +1,96 @@
+{% include "common/header.html" %}
+<div class="row">
+        <div class="col-md-2">
+            <ul class="nav nav-pills nav-stacked admin-menu">
+                <li class="active"><a href="#" data-target-id="home"><i class="fa fa-home fa-fw"></i>Home</a></li>
+            </ul>
+        </div>
+        <div class="col-md-10 well admin-content" id="home">
+        	<div class="row">
+        	<div class="col-md-8">
+            <form class="form-horizontal" role="form" action="{% url 'myprofile' %}" method="post">
+		      {% csrf_token %}
+		        <fieldset>
+				   <!-- Text input-->
+		          <div class="form-group">
+		            <label class="col-sm-3 control-label" for="textinput">Name</label>
+		            <div class="col-sm-9">
+		              <input type="text" name="user_name" placeholder="Name" 
+		              		value="{{uf.name}}" 
+		              		class="form-control" data-validation="length" 
+		        			data-validation-length="min4" 
+		        			data-validation-error-msg="User name must have at least 4 characters." required>
+		            </div>
+		          </div>
+		
+		          <div class="form-group">
+		            <div class="col-sm-offset-3 col-sm-9">
+		              <div class="pull-right">
+		                <button type="submit" class="btn btn-primary">Save</button>
+		              </div>
+		            </div>
+		          </div>
+		
+		        </fieldset>
+		      </form>
+		      </div>
+		      </div>
+        </div>
+    </div>
+
+<script>    
+ $(document).ready(function()
+{
+     var navItems = $('.admin-menu li > a');
+     var navListItems = $('.admin-menu li');
+     var allWells = $('.admin-content');
+     var allWellsExceptFirst = $('.admin-content:not(:first)');
+    
+     allWellsExceptFirst.hide();
+     navItems.click(function(e)
+     {
+         e.preventDefault();
+         navListItems.removeClass('active');
+         $(this).closest('li').addClass('active');
+        
+         allWells.hide();
+         var target = $(this).attr('data-target-id');
+         $('#' + target).show();
+     });
+});
+ 
+	function uploadUserImage(){
+		$("#userimage_form").submit(function(e)
+		{
+		 
+		    var formObj = $(this);
+		    var formURL = formObj.attr("action");
+		    var formData = new FormData(this);
+		    $.ajax({
+		        url: formURL,
+		    	type: 'POST',
+		        data:  formData,
+		    	mimeType:"multipart/form-data",
+		    	contentType: false,
+		        cache: false,
+		        processData:false,
+		    	success: function(data, textStatus, jqXHR)
+		    	{
+		 			console.log("data:"+data);
+		 			var obj = jQuery.parseJSON(data);
+					var profile_image = obj["profile_image"];
+		 			$("#profile_image").attr("src",profile_image);
+		 			$("#userimage").filestyle('clear');
+		    	},
+		     	error: function(jqXHR, textStatus, errorThrown) 
+		     	{
+		     	}          
+		    });
+		    e.preventDefault(); //Prevent Default action. 
+		}); 
+		$("#userimage_form").submit();
+
+	}
+ </script>
+
+{% include "common/footer.html" %}

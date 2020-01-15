@@ -1,0 +1,42 @@
+      </div> 
+       <!-- /.container -->
+       <!-- Footer -->
+        <footer class="footer">	
+        	<div class="container">
+                <div class="footerlink">
+                	<!-- <div class="about col-lg-4">
+                    	<a href="/aboutus">About</a>
+                    </div> -->
+                </div>
+      		</div>	
+        </footer>
+
+
+
+    
+    <script>
+ 	// Add validation
+    $.formUtils.addValidator({
+      name : 'custom_modelext',
+      validatorFunction : function(value, $el, config, language, $form) {
+    	  var extension = value.replace(/^.*\./, '');
+    	  console.log("extension:"+extension);
+    	  if (extension == "obj" || extension == "zip" || extension == "stl"){
+    		  return true;
+    	  }
+          return false;
+      },
+      errorMessage : 'You have to give an even number',
+      errorMessageKey: 'badEvenNumber'
+    });
+    
+    
+  	  $.validate({
+	    modules : 'security,file',
+	    validateOnBlur : true,
+	  });   	  
+	</script>
+
+</body>
+
+</html>
